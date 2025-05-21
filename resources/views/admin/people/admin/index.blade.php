@@ -13,7 +13,7 @@
             <div class="col-sm-6"><h3 class="mb-0">Informasi Admin</h3></div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                    <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{url('/dashboard')}}">Dashboard</a></li>
                     <li class="breadcrumb-item">Konfigurasi</li>
                     <li class="breadcrumb-item active" aria-current="page">admin</li>
                 </ol>
@@ -80,10 +80,12 @@
                                         <a href="{{ url('/people/admin/edit/' . $us->adminId) }}" class="btn btn-primary">Edit</a>        
                                         @endif
                                         @if(auth()->user()->hasRole(['admin', 'supervisor']) && auth()->user()->id !== $us->user_id) 
-                                            <form action="{{ url('people/admin/delete', $us->adminId) }}" method="POST" style="display: inline;">
+                                           <form id="delete-form-{{ $us->adminId }}" action="{{ url('people/admin/delete', $us->adminId) }}" method="POST" style="display: inline;">
                                                 @csrf
-                                                @method('POST') 
-                                                <button type="submit" class="btn btn-danger text-light hover:text-red-700" onclick="return confirm('Are you sure?')">Hapus</button>
+                                                @method('POST')
+                                                <button type="button" class="btn btn-danger btn-delete" data-id="{{ $us->adminId }}">
+                                                    Hapus
+                                                </button>
                                             </form>
                                         @endif
                                         
@@ -106,6 +108,26 @@
     <script src="https://cdn.datatables.net/2.2.1/js/dataTables.bootstrap5.js"></script>
     <script>
         new DataTable('#dataTableUsers');
+        document.querySelector('#dataTableUsers tbody').addEventListener('click', function(event) {
+            if(event.target.classList.contains('btn-delete')) {
+                const id = event.target.getAttribute('data-id');
+
+                Swal.fire({
+                    title: 'Apakah kamu yakin?',
+                    text: "Data user akan dihapus permanen!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('delete-form-' + id).submit();
+                    }
+                });
+            }
+        });
     </script>
 @endpush
 @endsection

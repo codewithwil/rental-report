@@ -22,7 +22,7 @@
                 <div class="col-sm-6"><h3 class="mb-0">Edit Data Cabang</h3></div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
-                        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{url('/dashboard')}}">Dashboard</a></li>
                         <li class="breadcrumb-item">Setting</li>
                         <li class="breadcrumb-item active" aria-current="page">Cabang</li>
                     </ol>
@@ -67,6 +67,17 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
+                                        <label class="form-label">Penanggung Jawab</label>
+                                        <select id="picUser" name="user_id" class="form-control" autocomplete="off">
+                                            <option value="">-- Pilih Penanggung Jawab --</option>
+                                            @foreach($users as $item)
+                                                <option value="{{ $item->id }}" {{ $branch->user_id == $item->id ? 'selected' : '' }}>
+                                                    {{ $item->supervisor->name ?? $item->employee->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
                                         <label for="addressEdit" class="form-label">Alamat Cabang</label>
                                         <textarea name="addressEdit" id="addressEdit" cols="30" rows="4" class="form-control">{{$branch->address}}</textarea>
                                     </div>
@@ -75,11 +86,11 @@
                                         <input type="text" name="operationalHoursEdit" class="form-control" id="operationalHoursEdit" value="{{ $branch->operationalHours }}"  placeholder="Masukkan jam operasional cabang">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="ltdEdit" class="form-label">Latitude</label>
+                                        <label for="ltdEdit" class="form-label">Latitude<small class="text-muted">*(Tidak Wajib)</small></label>
                                         <input type="text" name="ltdEdit" class="form-control" id="ltdEdit" value="{{ $branch->ltd }}">
                                     </div>
                                     <div class="mb-3">
-                                        <label for="lngEdit" class="form-label">Longitude</label>
+                                        <label for="lngEdit" class="form-label">Longitude<small class="text-muted">*(Tidak Wajib)</small></label>
                                         <input type="text" name="lngEdit" class="form-control" id="lngEdit" value="{{ $branch->lng }}" >
                                     </div>
                                 </div>
@@ -87,6 +98,7 @@
                                     <!-- Tombol Submit -->
                             <div class="col-12">
                                 <button type="submit" class="btn btn-primary">Simpan</button>
+                                <a href="{{ url('setting/branch') }}" class="btn btn-secondary">Kembali</a>
                             </div>
                         </div>
                     </div>
@@ -103,7 +115,6 @@
       document.addEventListener("DOMContentLoaded", function () {
             const defaultLat = {{ $branch->ltd ?? -6.200000 }};
             const defaultLng = {{ $branch->lng ?? 106.816666 }};
-            // Initialize first map (Map 1)
             const map = L.map('map').setView([defaultLat, defaultLng], 12);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors'
@@ -115,12 +126,10 @@
                 const { lat, lng } = e.latlng;
                 marker.setLatLng([lat, lng]);
 
-                // Update coordinates in the corresponding form fields
                 document.getElementById('ltdEdit').value = lat.toFixed(6);
                 document.getElementById('lngEdit').value = lng.toFixed(6);
             });
 
-            // Initialize second map (Map 2)
             const map2 = L.map('map2').setView([defaultLat, defaultLng], 12);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors'
@@ -132,12 +141,10 @@
                 const { lat, lng } = e.latlng;
                 marker2.setLatLng([lat, lng]);
 
-                // Update coordinates for the second map
                 document.getElementById('ltd2').value = lat.toFixed(6);
                 document.getElementById('lng2').value = lng.toFixed(6);
             });
 
-            // GeoSearch for Map 1 (if needed)
             const search = new window.GeoSearch.GeoSearchControl({
                 provider: new window.GeoSearch.OpenStreetMapProvider(),
                 style: 'bar',
@@ -161,7 +168,6 @@
                 document.getElementById('lngEdit').value = lng.toFixed(6);
             });
 
-            // GeoSearch for Map 2 (if needed)
             const search2 = new window.GeoSearch.GeoSearchControl({
                 provider: new window.GeoSearch.OpenStreetMapProvider(),
                 style: 'bar',
@@ -186,114 +192,10 @@
             });
         });
 
-        let cabangList = [];
+    </script>
 
-        function tambahCabang() {
-            let branchName = document.getElementById('branchName').value.trim();
-            let email = document.getElementById('email').value.trim();
-            let phone = document.getElementById('phone').value.trim();
-            let address = document.getElementById('address').value.trim();
-            let operationalHours = document.getElementById('operationalHours').value.trim();
-            let ltd = document.getElementById('ltd').value.trim();
-            let lng = document.getElementById('lng').value.trim();
-
-            if (!branchName || !email || !phone || !address || !operationalHours || !ltd || !lng) {
-                alert("Semua field harus diisi!");
-                return;
-            }
-
-            let newData = {
-                id: Date.now(),
-                branchName,
-                email,
-                phone,
-                address,
-                operationalHours,
-                ltd,
-                lng
-            };
-
-            cabangList.push(newData);
-
-            document.getElementById('branchName').value = '';
-            document.getElementById('email').value = '';
-            document.getElementById('phone').value = '';
-            document.getElementById('address').value = '';
-            document.getElementById('operationalHours').value = '';
-            document.getElementById('ltd').value = '';
-            document.getElementById('lng').value = '';
-
-            renderTable();
-        }
-
-        function renderTable() {
-            let tbody = document.querySelector("#branchTable tbody");
-            tbody.innerHTML = '';
-
-            cabangList.forEach((item, index) => {
-                let row = `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${item.branchName}</td>
-                        <td>${item.email}</td>
-                        <td>${item.phone}</td>
-                        <td>${item.address}</td>
-                        <td>${item.operationalHours}</td>
-                        <td>${item.ltd}</td>
-                        <td>${item.lng}</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm" onclick="hapusCabang(${item.id})">Hapus</button>
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += row;
-            });
-        }
-
-        function hapusCabang(id) {
-            cabangList = cabangList.filter(item => item.id !== id);
-            renderTable();
-        }
-
-        function simpanSemua() {
-            if (cabangList.length === 0) {
-                alert("Tidak ada data untuk disimpan!");
-                return;
-            }
-
-            let requests = cabangList.map(item => {
-                let formData = new FormData();
-                formData.append('branchName', item.branchName);
-                formData.append('email', item.email);
-                formData.append('phone', item.phone);
-                formData.append('address', item.address);
-                formData.append('operationalHours', item.operationalHours);
-                formData.append('ltd', item.ltd);
-                formData.append('lng', item.lng);
-
-                return fetch("{{ url('setting/branch/store') }}", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                    },
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(result => {
-                    console.log("Sukses:", result);
-                })
-                .catch(error => {
-                    console.error("Gagal menyimpan cabang:", error);
-                });
-            });
-
-            Promise.all(requests).then(() => {
-                cabangList = [];
-                renderTable();
-                alert("Semua data cabang berhasil disimpan!");
-                window.location.href = "/setting/branch/";
-            });
-        }
+    <script>
+        new TomSelect("#picUser", { placeholder: "Pilih Penanggung Jawab", allowEmptyOption: true });
     </script>
     @endpush
     @endsection

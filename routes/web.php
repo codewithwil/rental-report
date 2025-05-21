@@ -18,9 +18,9 @@ Route::middleware(['guest'])->group(function(){
 });
 
 
-Route::get('/dashboard', [DashboardC::class, 'index'])->name('dashboard');
 Route::middleware(['auth'])->group(function(){
     Route::get('/logout', [AuthC::class, 'logout'])->name('logout');
+    Route::get('/dashboard', [DashboardC::class, 'index'])->name('dashboard');
 
     Route::group(["prefix" => "/people", "as" => "people."], __DIR__ . "/web/people/index.php");
     Route::group(["prefix" => "/configuration", "as" => "configuration."], __DIR__ . "/web/configuration/index.php");

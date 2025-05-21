@@ -9,4 +9,3 @@ Route::get("/invoice", [ctr\API\Resources\Rules\RulesC::class, 'invoice'])->name
 Route::get("/edit/{rulesId}", [ctr\API\Resources\Rules\RulesC::class, 'edit'])->name("edit");
 Route::post("/store", [ctr\API\Resources\Rules\RulesC::class, 'store'])->name("store");
 Route::post("/update/{rulesId}", [ctr\API\Resources\Rules\RulesC::class, 'update'])->name("update");
-Route::post("/delete/{rulesId}", [ctr\API\Resources\Rules\RulesC::class, 'delete'])->name("delete");

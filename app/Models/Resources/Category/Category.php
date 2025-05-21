@@ -22,6 +22,7 @@ class Category extends Model
         'name', 'status', 'type'
     ];
 
+    public function vehicle(){return $this->hasMany(Vehicle::class, 'category_id', 'categoryId');}
     public function getTypeLabelAttribute()
     {
         $labels = [
@@ -32,5 +33,4 @@ class Category extends Model
         return $labels[$this->type] ?? 'Tidak Diketahui';
     }
 
-    public function vehicle(){return $this->hasMany(Vehicle::class, 'category_id', 'categoryId');}
 }

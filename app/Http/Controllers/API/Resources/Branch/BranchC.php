@@ -6,9 +6,9 @@ use App\{
     Http\Controllers\Controller,
     Models\Resources\Branch\Branch,
     Models\Resources\Company\Company,
-    Traits\DbBeginTransac
+    Traits\DbBeginTransac,
+    Models\User
 };
-
 use Illuminate\{
     Http\Request,
     Support\Facades\Auth,
@@ -21,32 +21,45 @@ class BranchC extends Controller
     use DbBeginTransac;
     public function index()
     {
-        if (Auth::user()->hasRole(['admin', 'owner']) && Auth::user()->branch_id === null) {
-            $branch = Branch::where('status', Branch::STATUS_ACTIVE)->orderBy('created_at', 'asc')->get();
+        $query = Branch::where('status', Branch::STATUS_ACTIVE)
+                        ->with(['picUser.supervisor', 'picUser.employee'])
+                        ->orderBy('created_at', 'asc');
+
+        if (Auth::user()->hasRole('admin') && Auth::user()->branch_id === null) {
+            $query->where('status', Branch::STATUS_ACTIVE);
         } else {
-            $branch = Branch::where('branchId', Auth::user()->branch_id)->orderBy('created_at', 'asc')->get();
+            $query->where('branchId', Auth::user()->branch_id);
         }
-    
+
+        $branch = $query->get();
+
         return view('admin.resources.branch.index', compact('branch'));
     }
-    
+
 
     public function invoice(){
-        $branch    = Branch::where('status', Branch::STATUS_ACTIVE)->orderBy('created_at', 'asc')->get();
+        $branch    = Branch::with('picUser')->where('status', Branch::STATUS_ACTIVE)->orderBy('created_at', 'asc')->get();
         $company = Company::first();
         return view('admin.resources.branch.invoice', compact('branch', 'company'));
     }
+
     public function create()
     {
+        $users = User::whereHas('supervisor')
+                 ->orWhereHas('employee')
+                 ->get();
         $company = Company::first();
-        return view('admin.resources.branch.create', compact('company'));
+        return view('admin.resources.branch.create', compact('users','company'));
     }
 
     public function edit($branchId)
     {
+       $users = User::whereHas('supervisor')
+                 ->orWhereHas('employee')
+                 ->get();
         $company = Company::first();
-        $branch = Branch::findOrFail($branchId);
-        return view('admin.resources.branch.update', compact('branch', 'company'));
+        $branch  = Branch::findOrFail($branchId);
+        return view('admin.resources.branch.update', compact('users','branch', 'company'));
     }
 
     public function nearest(Request $request)
@@ -76,7 +89,7 @@ class BranchC extends Controller
     public function distanceToBranch(Request $request)
     {
         $request->validate([
-            'latitude' => 'required|numeric',
+            'latitude'  => 'required|numeric',
             'longitude' => 'required|numeric',
             'branch_id' => 'required|exists:branches,branchId',
         ]);
@@ -113,21 +126,25 @@ class BranchC extends Controller
     {
         return $this->executeTransaction(function () use ($req) {
             $validator = Validator::make($req->all(), [
-                'company_id'        => 'required',
+                'user_id'           => 'required|exists:users,id',
+                'company_id'        => 'required|exists:companies,companyId',
                 'address'           => 'required|string|min:3|max:255',
-                'email'             => 'required|string|min:3|max:75',
+                'email'             => 'required|email|max:75|unique:branches,email',
                 'operationalHours'  => 'required|string|min:1|max:50',
-                'phone'             => 'required|digits_between:6,15',
-                'ltd'               => 'required',
-                'lng'               => 'required',
+                'phone'             => 'required|digits_between:12,15',
+                'ltd'               => 'nullable|numeric',
+                'lng'               => 'nullable|numeric',
             ]);
 
             if ($validator->fails()) {
-                $errors = $validator->errors()->all();
-                return redirect()->back()->with('error', $errors)->withInput();
+                return response()->json([
+                    'success' => false,
+                    'message' => $validator->errors()->first(),
+                ], 422);
             }
-
+            
             Branch::create([
+                'user_id'          => $req->input('user_id'),
                 'company_id'       => $req->input('company_id'),
                 'address'          => $req->input('address'),
                 'email'            => $req->input('email'),
@@ -144,18 +161,20 @@ class BranchC extends Controller
     public function update(Request $req, $branchId)
     {
         $req->validate([
-            'company_id'            => 'nullable',
-            'addressEdit'           => 'nullable|string|min:3|max:255',
-            'emailEdit'             => 'nullable|string|min:3|max:75',
-            'operationalHoursEdit'  => 'nullable|string|min:1|max:50',
-            'phoneEdit'             => 'nullable|digits_between:6,15',
-            'ltdEdit'               => 'nullable',
-            'lngEdit'               => 'nullable',
+            'user_id'           => 'nullable|exists:users,id',
+            'company_id'        => 'nullable|exists:companies,companyId',
+            'address'           => 'nullable|string|min:3|max:255',
+            'email'             => 'nullable|email|max:75|unique:branches,email',
+            'operationalHours'  => 'nullable|string|min:1|max:50',
+            'phone'             => 'nullable|digits_between:6,15',
+            'ltd'               => 'nullable|numeric',
+            'lng'               => 'nullable|numeric',
         ]);
 
         return $this->executeTransaction(function () use ($req, $branchId) {
             $branch = Branch::findOrFail($branchId);
 
+            $branch->user_id          = $req->user_id;
             $branch->company_id       = $req->company_id;
             $branch->address          = $req->addressEdit;
             $branch->email            = $req->emailEdit;

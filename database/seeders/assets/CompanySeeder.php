@@ -2,8 +2,12 @@
 
 namespace Database\Seeders\assets;
 
-use Illuminate\Database\Seeder;
-use App\Models\Resources\Company\Company;
+use Illuminate\{
+    Database\Seeder
+};
+use App\{
+    Models\Resources\Company\Company
+};
 
 class CompanySeeder extends Seeder
 {

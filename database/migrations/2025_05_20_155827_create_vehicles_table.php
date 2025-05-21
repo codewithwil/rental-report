@@ -17,13 +17,16 @@ return new class extends Migration
                 $table->unsignedBigInteger('branch_id');
                 $table->unsignedBigInteger('category_id');
                 $table->unsignedBigInteger('brand_id');
+                $table->string('photo', 200);
+                $table->string('name', 50);
                 $table->string('plate_number', 20);
                 $table->string('color', 20);
-                $table->string('name', 50);
-                $table->date('year');
+                $table->year('year');
                 $table->date('last_inspection_date');
+                $table->date('kir_expiry_date')->nullable(true); 
+                $table->date('tax_date')->nullable(false); 
                 $table->text('note');
-                $table->tinyInteger('status')->default(1);
+                $table->tinyInteger('status')->default(2);
                 $table->timestamps();
 
                 $table->foreign('branch_id')

@@ -13,7 +13,7 @@
             <div class="col-sm-6"><h3 class="mb-0">Data Peraturan Perusahaan</h3></div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                    <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{url('/dashboard')}}">Dashboard</a></li>
                     <li class="breadcrumb-item">Setting</li>
                     <li class="breadcrumb-item active" aria-current="page">Peraturan Perusahaan</li>
                 </ol>
@@ -41,7 +41,7 @@
 
                     </div>
                     <div class="card-body">
-                        <table id="dataTableCategory" class="table table-striped" style="width:100%">
+                        <table id="dataTableRules" class="table table-striped" style="width:100%">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -63,7 +63,7 @@
                                     </td>
                                     <td>
                                         @if(auth()->user()->hasRole(['admin', 'supervisor']))
-                                            <a href="{{ url('/setting/rules/edit/' . $rul->rulesId) }}" class="btn btn-primary">Edit</a>                                   
+                                            <a href="{{ url('/setting/rules/edit/' . $rul->rulesId) }}" class="btn btn-primary">Edit</a>                           
                                         @endif
                                     </td>
                                 </tr>
@@ -83,7 +83,7 @@
     <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.2.1/js/dataTables.bootstrap5.js"></script>
     <script>
-        new DataTable('#dataTableCategory');
+        new DataTable('#dataTableRules');
     </script>
 @endpush
 @endsection

@@ -46,7 +46,7 @@ class RulesC extends Controller
             ]);
 
             if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
+                return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $validator->getMessage());
             }
 
             Rules::create([
@@ -57,7 +57,6 @@ class RulesC extends Controller
                 ->with('success', 'Data Aturan Perusahaan berhasil ditambahkan!');
         });
     }
-
     
     public function update(Request $req, $rulesId)
     {
@@ -74,20 +73,4 @@ class RulesC extends Controller
                 ->with('success', 'Data Aturan Perusahaan berhasil diperbarui.');
         });
     }
-
-
-    public function delete($rulesId)
-    {
-        try {
-            $rules = Rules::findOrFail($rulesId);
-            $rules->delete();
-
-            return redirect('/setting/rules/')
-                ->with('success', 'Data Aturan Perusahaan Berhasil Dihapus');
-        } catch (\Exception $e) {
-            return redirect('/setting/rules/')
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
-        }
-    }
-
 }

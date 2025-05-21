@@ -43,11 +43,10 @@ use HasFactory, Notifiable, HasRoles;
     }
 
     public function branch(){return $this->belongsTo(Branch::class, 'branch_id', 'branchId');}
+    public function picBranch(){return $this->hasMany(Branch::class, 'user_id');}
     public function admin(){return $this->hasOne(Admin::class, 'user_id');}
-    public function customer(){return $this->hasOne(Customers::class, 'user_id');}
     public function supervisor(){return $this->hasOne(Supervisor::class, 'user_id');}
     public function employee(){return $this->hasOne(EmployeeEmployee::class, 'user_id');}
-
     public function realName()
     {
         if ($this->hasRole('admin') && $this->admin) {
@@ -62,8 +61,8 @@ use HasFactory, Notifiable, HasRoles;
             return $this->employee->name;
         }
 
-
         return $this->name; 
     }
+
 
 }

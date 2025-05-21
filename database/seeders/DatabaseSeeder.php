@@ -7,14 +7,16 @@ use Database\{
     Seeders\assets\RolesSeeder,
     Seeders\assets\BranchSeeder,
     Seeders\assets\CategorySeeder,
-    Seeders\assets\CompanySeeder
-
+    Seeders\assets\CompanySeeder,
+    Seeders\assets\BrandSeeder,
+    Seeders\assets\RulesSeeder
 };
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
 use Illuminate\{
     Database\Seeder,
     Support\Facades\DB
 };
+
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
@@ -27,12 +29,13 @@ class DatabaseSeeder extends Seeder
                 RolesSeeder::class,  
                 UserSeeder::class,  
                 CategorySeeder::class,  
+                BrandSeeder::class,  
+                RulesSeeder::class,  
             ]);
                 DB::commit();
         } catch (\Throwable $th) {
         DB::rollBack();
         dd($th);
         }
-    
     }
 }

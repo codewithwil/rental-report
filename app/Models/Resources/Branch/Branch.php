@@ -19,10 +19,11 @@ class Branch extends Model
     protected $table      = 'branches';
     protected $primaryKey = 'branchId';
     protected $fillable   = [
-        'company_id', 'address', 'email', 'operationalHours', 'phone',
-        'ltd', 'lng', 'status' 
+        'user_id' ,'company_id', 'address', 'email', 'operationalHours', 
+        'phone', 'ltd', 'lng', 'status' 
     ];
 
+    public function picUser(){return $this->belongsTo(User::class, 'user_id');}
     public function users(){return $this->hasMany(User::class, 'branch_id', 'branchId');}
     public function vehicle(){return $this->hasMany(Vehicle::class, 'brand_id', 'brandId');}
     public function company(){return $this->belongsTo(Company::class, 'company_id', 'companyId');}

@@ -1,5 +1,5 @@
 @extends('admin.template.template')
-@section('title', 'Invoice Kategori')
+@section('title', 'Invoice Peraturan Perusahaan')
 
 @section('content')
 @push('css')
@@ -114,9 +114,9 @@
             <div class="col-sm-6"><h3 class="mb-0">Invoice kategori</h3></div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                    <li class="breadcrumb-item"><a href="{{url('/dashboard')}}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
                     <li class="breadcrumb-item">Setting</li>
-                    <li class="breadcrumb-item active" aria-current="page">Kategori</li>
+                    <li class="breadcrumb-item active" aria-current="page">Peraturan Perusahaan</li>
                 </ol>
             </div>
         </div>
@@ -152,18 +152,23 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Nama Kategori</th>
-                                        <th>Tipe Kendaraan</th>
+                                        <th>Peraturan Perusahaan</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($category as $cat)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $cat->name }}</td>
-                                        <td>{{ $cat->type_label }}</td>
-                                    </tr>
-                                    @endforeach
+                                  @foreach ($rules as $rul)
+                                <tr>
+                                    <td>{{ $loop->iteration  }}</td>
+                                     <td>
+                                        @php
+                                            $lines = explode("\n", $rul->content);
+                                        @endphp
+                                        @foreach ($lines as $line)
+                                            <p>{{ $line }}</p>
+                                        @endforeach
+                                    </td>
+                                </tr>
+                                @endforeach
                                 </tbody>
                             </table>
                         </div>

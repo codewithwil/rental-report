@@ -37,6 +37,8 @@
     <link rel="stylesheet" href="{{ asset('admin/css/adminlte.css') }}" />
     <!-- Toastr CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    {{-- tom select  --}}
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
 
     @stack('css')
     <style>
@@ -53,7 +55,22 @@
       .toast-message {
           font-size: 16px !important;
       }
-  </style>
+      /* tom select  */
+      .ts-wrapper {
+        font-size: 1.25rem;
+      }
+      .ts-control {
+        min-height: 45px;
+        padding: 10px 14px;
+        font-size: 1rem; 
+      }
+      .ts-control input {
+        font-size: 1rem;
+      }
+      .ts-dropdown .option {
+        font-size: 1rem;
+      }
+  </style> 
   </head>
   <!--end::Head-->
   <!--begin::Body-->
@@ -148,7 +165,11 @@
       @endif
     </script>
   
+    {{-- sweet alert  --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    {{-- tom select  --}}
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
     @stack('js')
     <!--end::Script-->
   </body>

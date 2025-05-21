@@ -13,7 +13,7 @@
             <div class="col-sm-6"><h3 class="mb-0">Data Kategori</h3></div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                    <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{url('/dashboard')}}">Dashboard</a></li>
                     <li class="breadcrumb-item">Setting</li>
                     <li class="breadcrumb-item active" aria-current="page">kategori</li>
                 </ol>
@@ -57,11 +57,13 @@
                                     <td>
                                         @if(auth()->user()->hasRole(['admin', 'supervisor']))
                                             <a href="{{ url('/setting/category/edit/' . $cat->categoryId) }}" class="btn btn-primary">Edit</a>                                       
-                                        <form action="{{ url('setting/category/delete', $cat->categoryId) }}" method="POST" style="display: inline;">
-                                            @csrf
-                                            @method('POST') 
-                                            <button type="submit" class="btn btn-danger text-light hover:text-red-700" onclick="return confirm('Are you sure?')">Hapus</button>
-                                        </form>
+                                            <form id="delete-form-{{ $cat->categoryId }}" action="{{ url('setting/category/delete', $cat->categoryId) }}" method="POST" style="display: inline;">
+                                                @csrf
+                                                @method('POST')
+                                                <button type="button" class="btn btn-danger btn-delete" data-id="{{ $cat->categoryId }}">
+                                                    Hapus
+                                                </button>
+                                            </form>
                                         @endif
                                     </td>
                                 </tr>
@@ -82,6 +84,26 @@
     <script src="https://cdn.datatables.net/2.2.1/js/dataTables.bootstrap5.js"></script>
     <script>
         new DataTable('#dataTableCategory');
+        document.querySelector('#dataTableCategory tbody').addEventListener('click', function(event) {
+            if(event.target.classList.contains('btn-delete')) {
+                const id = event.target.getAttribute('data-id');
+
+                Swal.fire({
+                    title: 'Apakah kamu yakin?',
+                    text: "Data kategori akan dihapus permanen!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('delete-form-' + id).submit();
+                    }
+                });
+            }
+        });
     </script>
 @endpush
 @endsection

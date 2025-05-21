@@ -2,14 +2,22 @@
 
 namespace Database\Seeders\assets;
 
-use App\Models\People\Admin\Admin;
-use App\Models\People\Employee\Employee;
-use App\Models\People\Supervisor\Supervisor;
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
-use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\DB;
+use App\{
+    Models\People\Admin\Admin,
+    Models\People\Employee\Employee,
+    Models\People\Supervisor\Supervisor,
+    Models\User
+};
+
+use Illuminate\{
+    Database\Seeder,
+    Support\Facades\Hash,
+    Support\Facades\DB
+};
+
+use Spatie\{
+    Permission\Models\Role
+};
 
 class UserSeeder extends Seeder
 {

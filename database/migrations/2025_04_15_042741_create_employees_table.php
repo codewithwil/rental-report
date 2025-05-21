@@ -22,7 +22,7 @@ return new class extends Migration
                 $table->tinyInteger('gender');
                 $table->date('birthdate');
                 $table->date('hire_date');
-                $table->decimal('salary', 10,2);
+                $table->decimal('salary', 10,2)->nullable(true);
                 $table->tinyInteger('status')->default(1);
                 $table->timestamps();
 

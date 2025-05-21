@@ -5,7 +5,10 @@ namespace Database\Seeders\assets;
 use Illuminate\{
     Database\Seeder,
 };
-use Spatie\Permission\Models\Role;
+
+use Spatie\{
+    Permission\Models\Role
+};
 
 class RolesSeeder extends Seeder
 {

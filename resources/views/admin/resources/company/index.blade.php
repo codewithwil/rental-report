@@ -12,7 +12,7 @@
             <div class="col-sm-6"><h3 class="mb-0">Informasi Perusahaan</h3></div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                    <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{url('/dashboard')}}">Dashboard</a></li>
                     <li class="breadcrumb-item">Konfigurasi</li>
                     <li class="breadcrumb-item active" aria-current="page">Perusahaan</li>
                 </ol>
@@ -62,13 +62,10 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
                     </div>
-                
-                </div>
-
-                <!-- Tombol Submit -->
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
         </div>

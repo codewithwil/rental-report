@@ -8,7 +8,7 @@
             <div class="col-sm-6"><h3 class="mb-0">Tambah Data Kategori</h3></div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                    <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{url('/dashboard')}}">Dashboard</a></li>
                     <li class="breadcrumb-item">Setting</li>
                     <li class="breadcrumb-item active" aria-current="page">Kategori</li>
                 </ol>
@@ -39,6 +39,7 @@
                             </select>
                         </div>
                         <button type="button" class="btn btn-success" onclick="tambahKategori()">Tambah</button>
+                        <a href="{{ url('setting/category') }}" class="btn btn-secondary">Kembali</a>
                     </div>
                 </div>
             </div>

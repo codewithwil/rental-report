@@ -7,7 +7,7 @@
             <div class="col-sm-6"><h3 class="mb-0">Edit Data Supervisor</h3></div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                    <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{url('/dashboard')}}">Dashboard</a></li>
                     <li class="breadcrumb-item">Konfigurasi</li>
                     <li class="breadcrumb-item active" aria-current="page">Users</li>
                 </ol>
@@ -63,7 +63,10 @@
                                             </option>
                                         @else
                                             @foreach ($branch as $b)
-                                                <option  value="{{ $b->branchId }}" {{ $b->branchId == $promo->branch_id ? 'selected' : '' }}>{{ $b->address }}</option>
+                                                <option value="{{ $b->branchId }}" 
+                                                    {{ $users->user && $b->branchId == $users->user->branch_id ? 'selected' : '' }}>
+                                                    {{ $b->email }}
+                                                </option>
                                             @endforeach
                                         @endif
                                         </select>
@@ -112,13 +115,11 @@
                                 </div>
                             </div>
                         </div>
-                        
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                            <a href="{{ url('people/supervisor') }}" class="btn btn-secondary">Kembali</a>
+                        </div>
                     </div>
-                </div>
-
-                <!-- Tombol Submit -->
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
         </div>
