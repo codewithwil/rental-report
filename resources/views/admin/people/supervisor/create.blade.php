@@ -19,7 +19,6 @@
     <div class="container-fluid">
         <div class="row">
             <div class="card mb-4" style="border-left: 5px solid #007bff;">
-                {{-- acount section   --}}
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">Akun Supervisor</h5>
                 </div>

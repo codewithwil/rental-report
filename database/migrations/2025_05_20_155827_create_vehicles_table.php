@@ -24,7 +24,11 @@ return new class extends Migration
                 $table->year('year');
                 $table->date('last_inspection_date');
                 $table->date('kir_expiry_date')->nullable(true); 
-                $table->date('tax_date')->nullable(false); 
+                $table->date('stnk_date')->nullable(false); 
+                $table->date('bpkb_date')->nullable(false); 
+                $table->string('kir_document', 200)->nullable();
+                $table->string('bpkb_document', 200)->nullable();
+                $table->string('stnk_document', 200)->nullable();
                 $table->text('note');
                 $table->tinyInteger('status')->default(2);
                 $table->timestamps();

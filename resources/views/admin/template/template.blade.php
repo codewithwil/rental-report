@@ -170,8 +170,40 @@
 
     {{-- tom select  --}}
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<script>
+function fetchNotifications() {
+  $.get('/notifications/latest', function(notifications) {
+      console.log('AJAX /notifications/latest response:', notifications);
+      notifications.forEach(function(notif) {
+          toastr.info(notif.message, notif.title);
+
+          $.ajax({
+              url: '/notifications/' + notif.id + '/mark-read',
+              type: 'POST',
+              data: {
+                  _token: '{{ csrf_token() }}'
+              },
+              success: function() {
+                  console.log('Marked notification', notif.id, 'as read');
+              },
+              error: function(xhr) {
+                  console.error('Failed to mark as read:', xhr.responseText);
+              }
+          });
+      });
+  }).fail(function(xhr) {
+      console.error('Failed to fetch notifications:', xhr.responseText);
+  });
+}
+
+$(document).ready(function() {
+  fetchNotifications();           
+  setInterval(fetchNotifications, 3600000);  
+});
+</script>
+
     @stack('js')
-    <!--end::Script-->
+    
   </body>
   <!--end::Body-->
 </html>

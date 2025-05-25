@@ -39,26 +39,29 @@
           </a>
         </li>
 
-        <li class="nav-header text-muted text-uppercase small mt-3">Transaksi</li>
+
+        @if(auth()->user()->hasRole(['admin', 'supervisor', 'petugas']))
+        <li class="nav-header text-muted text-uppercase small mt-3">Laporan</li>
         <li class="nav-item">
           <a href="#" class="nav-link">
-            <i class="nav-icon bi bi-currency-dollar"></i>
+            <i class="nav-icon bi bi-envelope"></i>
             <p>
-              Transaksi
+              Laporan
               <i class="nav-arrow bi bi-chevron-right"></i>
             </p>
           </a>
           <ul class="nav nav-treeview ps-4">
             <li class="nav-item">
-              <a href="{{ url('transactions/order/') }}" class="nav-link">
+              <a href="{{ url('report/weeklyReport/') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
-                <p>Pesanan Jasa</p>
+                <p>Laporan Mingguan</p>
               </a>
             </li>
           </ul>
         </li>
+        @endif
 
-        @if(auth()->user()->hasRole(['admin', 'supervisor', 'petugas', 'owner']))
+        @if(auth()->user()->hasRole(['admin', 'supervisor']))
         <li class="nav-header text-muted text-uppercase small mt-3">Setting</li>
         <li class="nav-item">
           <a href="#" class="nav-link">
@@ -103,6 +106,7 @@
         </li>
         @endif
 
+        @if(auth()->user()->hasRole(['admin', 'supervisor']))
         <li class="nav-header text-muted text-uppercase small mt-3">Konfigurasi Aplikasi</li>
         <li class="nav-item">
           <a href="#" class="nav-link">
@@ -113,16 +117,12 @@
             </p>
           </a>
           <ul class="nav nav-treeview ps-4">
-            @if(auth()->user()->hasRole(['admin', 'supervisor']))
             <li class="nav-item">
               <a href="{{ url('configuration/company') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Informasi Perusahaan</p>
               </a>
             </li>
-            @endif
-
-            @if(auth()->user()->hasRole(['admin', 'supervisor', 'petugas', 'owner']))
             <li class="nav-item">
               <a href="{{ url('people/users') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>

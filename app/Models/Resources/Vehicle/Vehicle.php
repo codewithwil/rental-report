@@ -7,7 +7,7 @@ use App\{
     Models\Resources\Brand\Brand,
     Models\Resources\Category\Category
 };
-
+use App\Models\Report\WeeklyReport\WeeklyReport;
 use Illuminate\{
     Database\Eloquent\Model
 };
@@ -23,12 +23,14 @@ class Vehicle extends Model
     protected $fillable   = [
         'branch_id', 'category_id', 'brand_id', 'photo', 'name', 
         'plate_number', 'color', 'year', 'last_inspection_date', 
-        'kir_expiry_date', 'tax_date' ,'note', 'status'
+        'kir_expiry_date', 'stnk_date', 'bpkb_date', 'kir_document',
+        'bpkb_document', 'stnk_document', 'note', 'status'
     ];
 
     public function branch(){return $this->belongsTo(Branch::class, 'branch_id', 'branchId');}
     public function category(){return $this->belongsTo(Category::class, 'category_id', 'categoryId');}
     public function Brand(){return $this->belongsTo(Brand::class, 'brand_id', 'brandId');}
+    public function weeklyReport(){return $this->hasOne(WeeklyReport::class, 'vehicle_id', 'vehicleId');}
 
     public function getStatusLabelAttribute()
     {

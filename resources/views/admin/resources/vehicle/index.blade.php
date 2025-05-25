@@ -125,7 +125,7 @@
                                         <td data-label="Aksi">
                                             @if(auth()->user()->hasRole(['admin', 'supervisor']))
                                             <a href="{{ url('setting/vehicle/edit/' . $v->vehicleId) }}" class="btn btn-primary">Edit</a>
-                                            <a href="{{ url('setting/vehicle/show/' . $v->vehicleId) }}" class="btn btn-primary">Detail</a>
+                                            <a href="{{ url('setting/vehicle/show/' . $v->vehicleId) }}" class="btn btn-info">Detail</a>
                                             <form action="{{ url('setting/vehicle/delete', $v->vehicleId) }}" method="POST" style="display: inline;">
                                                     @csrf
                                                     @method('POST') 

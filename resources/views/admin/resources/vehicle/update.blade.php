@@ -1,7 +1,31 @@
 @extends('admin.template.template')
 @section('title', 'Edit Data Kendaraan')
 @section('content')
+@push('css')
+<link href="https://unpkg.com/filepond/dist/filepond.min.css" rel="stylesheet" />
+<link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css" rel="stylesheet" />
+<link href="https://unpkg.com/filepond-plugin-pdf-preview/dist/filepond-plugin-pdf-preview.min.css" rel="stylesheet" />
+<style>
+    .filepond--root {
+        height: 180px;
+        min-height: 180px;
+        font-size: 1rem;
+    }
+    .filepond--drop-label {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
 
+    .filepond--panel-root {
+        border: 2px dashed #007bff;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+    }
+</style>
+@endpush
 <div class="app-content-header">
     <div class="container-fluid">
         <div class="row">
@@ -81,30 +105,47 @@
                             @endfor
                         </select>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Tanggal Pemeriksaan Terakhir</label>
                         <input type="date" name="last_inspection_date" class="form-control" value="{{ $vehicle->last_inspection_date }}">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Tanggal Expired KIR</label>
                         <input type="date" name="kir_expiry_date" class="form-control" value="{{ $vehicle->kir_expiry_date }}">
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Tanggal Pajak</label>
-                        <input type="date" name="tax_date" class="form-control" value="{{ $vehicle->tax_date }}">
+                    <div class="col-md-3">
+                        <label class="form-label">Tanggal Expired STNK</label>
+                        <input type="date" name="stnk_date" class="form-control" value="{{ $vehicle->stnk_date }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Tanggal Expired BPKB</label>
+                        <input type="date" name="bpkb_date" class="form-control" value="{{ $vehicle->bpkb_date }}">
                     </div>
                     <div class="col-md-12">
                         <label class="form-label">Catatan</label>
                         <textarea name="note" class="form-control" rows="3" required>{{ $vehicle->note }}</textarea>
                     </div>
-                    <div class="col-md-6">
+                    
+                    <div class="col-md-3">
                         <label class="form-label">Foto Kendaraan</label>
-                        <input type="file" name="photo" class="form-control" accept="image/*">
-                        @if($vehicle->photo)
-                            <small class="text-muted">Foto saat ini:</small><br>
-                            <img src="{{ asset('storage/'.$vehicle->photo) }}" alt="Foto Kendaraan" class="img-thumbnail mt-1" style="max-height: 120px;">
-                        @endif
+                        <input type="file" name="photo" id="photo" class="filepond" accept="image/*">
                     </div>
+
+                   <div class="col-md-3">
+                        <label class="form-label">Dokumen KIR</label>
+                        <input type="file" name="kir_document" id="kir_document" class="filepond" accept="application/pdf">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Dokumen STNK</label>
+                        <input type="file" name="stnk_document" id="stnk_document" class="filepond" accept="application/pdf">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Dokumen BPKB</label>
+                        <input type="file" name="bpkb_document" id="bpkb_document" class="filepond" accept="application/pdf">
+                    </div>
+
                     <div class="col-md-6">
                         <label for="status" class="form-label">Status Kendaraan</label>
                         <select name="status" id="status" class="form-control">
@@ -126,12 +167,80 @@
 </div>
 
 @push('js')
-    <script>
-        new TomSelect("#branchSelect", { placeholder: "Pilih Cabang", allowEmptyOption: true });
-        new TomSelect("#categorySelect", { placeholder: "Pilih Kategori", allowEmptyOption: true });
-        new TomSelect("#brandSelect", { placeholder: "Pilih Merk", allowEmptyOption: true });
-        new TomSelect("#yearSelect", { placeholder: "Pilih Tahun", allowEmptyOption: true });
-    </script>
+<script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.min.js"></script>
+<script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.js"></script>
+<script src="https://unpkg.com/filepond-plugin-pdf-preview/dist/filepond-plugin-pdf-preview.min.js"></script>
+<script src="https://unpkg.com/filepond-plugin-file-encode/dist/filepond-plugin-file-encode.min.js"></script>
+<script>
+    FilePond.registerPlugin(
+        FilePondPluginFileValidateType, 
+        FilePondPluginImagePreview, 
+        FilePondPluginPdfPreview, 
+        FilePondPluginFileEncode
+    );
+
+    FilePond.setOptions({
+            server: null,
+            allowMultiple: false,
+            acceptedFileTypes: ['image/*', 'application/pdf'],
+            maxFileSize: '2MB',
+            instantUpload: false,
+        });
+    const photo = FilePond.create(document.querySelector('input[name="photo"]'), {
+        allowMultiple: false,
+        acceptedFileTypes: ['image/*'],
+        files: [
+            @if($vehicle->photo)
+            {
+                source: '{{ asset('storage/' . $vehicle->photo) }}',
+            }
+            @endif
+        ]
+    });
+
+    const kirDocument = FilePond.create(document.querySelector('input[name="kir_document"]'), {
+        allowMultiple: false,
+        acceptedFileTypes: ['application/pdf'],
+        files: [
+            @if($vehicle->kir_document)
+            {
+                source: '{{ asset('storage/' . $vehicle->kir_document) }}',
+            }
+            @endif
+        ]
+    });
+
+    const stnkDocument = FilePond.create(document.querySelector('input[name="stnk_document"]'), {
+        allowMultiple: false,
+        acceptedFileTypes: ['application/pdf'],
+        files: [
+            @if($vehicle->stnk_document)
+            {
+                source: '{{ asset('storage/' . $vehicle->stnk_document) }}',
+            }
+            @endif
+        ]
+    });
+
+    const bpkbDocument = FilePond.create(document.querySelector('input[name="bpkb_document"]'), {
+        allowMultiple: false,
+        acceptedFileTypes: ['application/pdf'],
+        files: [
+            @if($vehicle->bpkb_document)
+            {
+                source: '{{ asset('storage/' . $vehicle->bpkb_document) }}',
+            }
+            @endif
+        ]
+    });
+
+    new TomSelect("#branchSelect", { placeholder: "Pilih Cabang", allowEmptyOption: true });
+    new TomSelect("#categorySelect", { placeholder: "Pilih Kategori", allowEmptyOption: true });
+    new TomSelect("#brandSelect", { placeholder: "Pilih Merk", allowEmptyOption: true });
+    new TomSelect("#yearSelect", { placeholder: "Pilih Tahun", allowEmptyOption: true });
+</script>
 @endpush
+
 
 @endsection

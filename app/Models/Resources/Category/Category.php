@@ -32,5 +32,4 @@ class Category extends Model
     
         return $labels[$this->type] ?? 'Tidak Diketahui';
     }
-
 }

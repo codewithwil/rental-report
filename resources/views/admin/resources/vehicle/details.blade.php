@@ -33,9 +33,45 @@
                                 <th>Foto Kendaraan</th>
                                 <td>
                                     @if($vehicle->photo)
-                                        <img src="{{ asset('storage/'.$vehicle->photo) }}" alt="Foto Kendaraan" style="max-height: 120px;" class="img-thumbnail">
+                                        <img src="{{ asset('storage/'.$vehicle->photo) }}" alt="Foto Kendaraan" style="max-height: 120px; cursor: pointer;" class="img-thumbnail" data-bs-toggle="modal" data-bs-target="#photoModal">
                                     @else
                                         <em>Belum ada foto</em>
+                                    @endif
+                                </td>
+                            </tr>
+                           <tr>
+                                <th>Dokumen KIR</th>
+                                <td>
+                                    @if($vehicle->kir_document)
+                                        <button class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#kirModal">
+                                            Lihat Dokumen KIR
+                                        </button>
+                                    @else
+                                        <em>Belum ada dokumen</em>
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Dokumen BPKB</th>
+                                <td>
+                                    @if($vehicle->bpkb_document)
+                                        <button class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#bpkbModal">
+                                            Lihat Dokumen BPKB
+                                        </button>
+                                    @else
+                                        <em>Belum ada dokumen</em>
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Dokumen STNK</th>
+                                <td>
+                                    @if($vehicle->stnk_document)
+                                        <button class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#stnkModal">
+                                            Lihat Dokumen STNK
+                                        </button>
+                                    @else
+                                        <em>Belum ada dokumen</em>
                                     @endif
                                 </td>
                             </tr>
@@ -76,8 +112,12 @@
                                 <td>{{ $vehicle->kir_expiry_date ?? '-' }}</td>
                             </tr>
                             <tr>
-                                <th>Tanggal Pajak</th>
-                                <td>{{ $vehicle->tax_date ?? '-' }}</td>
+                                <th>Tanggal Expired STNK</th>
+                                <td>{{ $vehicle->stnk_date ?? '-' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Tanggal Expired BPKB</th>
+                                <td>{{ $vehicle->bpkb_date ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <th>Catatan</th>
@@ -104,6 +144,56 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="modal fade" id="photoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <img src="{{ asset('storage/'.$vehicle->photo) }}" class="w-100">
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="kirModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Preview Dokumen KIR</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="height: 80vh;">
+                <iframe src="{{ asset('storage/'.$vehicle->kir_document) }}" style="width:100%; height:100%;" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="bpkbModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Preview Dokumen BPKB</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="height: 80vh;">
+                <iframe src="{{ asset('storage/'.$vehicle->bpkb_document) }}" style="width:100%; height:100%;" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="stnkModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Preview Dokumen STNK</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="height: 80vh;">
+                <iframe src="{{ asset('storage/'.$vehicle->stnk_document) }}" style="width:100%; height:100%;" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
 </div>
 
 @push('js')
