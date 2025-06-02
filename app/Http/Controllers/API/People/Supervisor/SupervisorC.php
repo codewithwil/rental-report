@@ -13,7 +13,6 @@ use App\{
 
 use Illuminate\{
     Http\Request,
-    Support\Facades\Auth,
     Support\Facades\DB,
     Support\Facades\Hash,
     Support\Facades\Storage,
@@ -28,14 +27,7 @@ class SupervisorC extends Controller
 
     public function index()
     {
-        if (Auth::user()->hasRole(['admin', 'owner']) && Auth::user()->branch_id === null) {
-            $users = Supervisor::with('user.branch')->get();
-        } else {
-            $users = Supervisor::whereHas('user', function ($query) {
-                $query->where('branch_id', Auth::user()->branch_id);
-            })->with('user.branch')->get();
-        }
-
+        $users = Supervisor::with(['user.branch'])->get();
         return view('admin.people.supervisor.index', compact('users'));
     }
     

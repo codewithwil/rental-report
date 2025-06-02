@@ -95,10 +95,6 @@
                   <button type="submit" class="btn btn-primary btn-lg">Login</button>
                 </div>
               </form>
-  
-              <div class="text-center mt-4">
-                <p class="mb-0">Belum punya akun? <a href="{{ url('register') }}" class="text-primary text-decoration-none">Daftar di sini</a></p>
-              </div>
             </div>
           </div>
   

@@ -65,17 +65,6 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label">Penanggung Jawab</label>
-                                     <select id="picUser" name="user_id" class="form-control" placeholder="Pilih Kategori" autocomplete="off">
-                                        <option value="">-- Pilih Penanggung Jawab --</option>
-                                        @foreach($users as $user)
-                                            <option value="{{ $user->id }}">
-                                                {{ $user->supervisor->name ?? $user->employee->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="mb-3">
                                     <label for="address" class="form-label">Alamat Cabang</label>
                                     <textarea name="address" id="address" cols="30" rows="4" class="form-control"></textarea>
                                 </div>
@@ -153,14 +142,6 @@
                 document.getElementById('lng').value = lng.toFixed(6);
             });
         });
-    </script>
-    <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                new TomSelect("#picUser", {
-                    placeholder: "Pilih Penanggung Jawab",
-                    allowEmptyOption: true
-                });
-            });
     </script>
 @endpush
 

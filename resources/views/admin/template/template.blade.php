@@ -135,11 +135,6 @@
       crossorigin="anonymous"
     ></script>
 
-    <script
-      src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/maps/world.js"
-      integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY="
-      crossorigin="anonymous"
-    ></script>
 
      <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -170,37 +165,36 @@
 
     {{-- tom select  --}}
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-<script>
-function fetchNotifications() {
-  $.get('/notifications/latest', function(notifications) {
-      console.log('AJAX /notifications/latest response:', notifications);
-      notifications.forEach(function(notif) {
-          toastr.info(notif.message, notif.title);
+    <script>
+    function fetchNotifications() {
+      $.get('/notification/latest', function(notifications) {
+          notifications.forEach(function(notif) {
+              toastr.info(notif.message, notif.title);
 
-          $.ajax({
-              url: '/notifications/' + notif.id + '/mark-read',
-              type: 'POST',
-              data: {
-                  _token: '{{ csrf_token() }}'
-              },
-              success: function() {
-                  console.log('Marked notification', notif.id, 'as read');
-              },
-              error: function(xhr) {
-                  console.error('Failed to mark as read:', xhr.responseText);
-              }
+              $.ajax({
+                  url: '/notification/' + notif.id + '/mark-read',
+                  type: 'POST',
+                  data: {
+                      _token: '{{ csrf_token() }}'
+                  },
+                  success: function() {
+                      console.log('Marked notification', notif.id, 'as read');
+                  },
+                  error: function(xhr) {
+                      console.error('Failed to mark as read:', xhr.responseText);
+                  }
+              });
           });
+      }).fail(function(xhr) {
+          console.error('Failed to fetch notifications:', xhr.responseText);
       });
-  }).fail(function(xhr) {
-      console.error('Failed to fetch notifications:', xhr.responseText);
-  });
-}
+    }
 
-$(document).ready(function() {
-  fetchNotifications();           
-  setInterval(fetchNotifications, 3600000);  
-});
-</script>
+    $(document).ready(function() {
+      fetchNotifications();           
+      setInterval(fetchNotifications, 3600000);  
+    });
+    </script>
 
     @stack('js')
     

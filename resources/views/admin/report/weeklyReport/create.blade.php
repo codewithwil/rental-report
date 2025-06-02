@@ -307,29 +307,15 @@
             FilePondPluginFileEncode
         );
 
-        const pondInstances = [];
-
         document.querySelectorAll('input.filepond').forEach(input => {  
-            const pond = FilePond.create(input, {
+            FilePond.create(input, {
                 allowMultiple: false,
                 allowFileEncode: true,
                 instantUpload: false,
                 labelIdle: 'Drag & Drop your file or <span class="filepond--label-action">Browse</span>',
                 acceptedFileTypes: ['image/*', 'video/*'],
             });
-            pondInstances.push(pond);
         });
-
-        document.querySelector('form').addEventListener('submit', function(e) {
-            for (const pond of pondInstances) {
-                if (pond.getFiles().length === 0) {
-                    alert('Semua foto wajib diisi kecuali catatan!');
-                    e.preventDefault();
-                    return false;
-                }
-            }
-        });
-
     });
 
     function goPrevious() {

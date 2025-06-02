@@ -2,13 +2,18 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Models\User;
-use App\Events\VehicleReminderNotification;
-use App\Models\Notification\Notification;
-use App\Models\Resources\Vehicle\Vehicle;
+use Illuminate\{
+    Console\Command,
+    Support\Facades\Log
+};
+
+use App\{
+    Models\User,
+    Models\Resources\Vehicle\Vehicle,
+    Events\VehicleReminderNotification,
+    Models\Notification\Notification
+};
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 
 class SendVehicleReminderNotifications extends Command
 {
@@ -17,14 +22,14 @@ class SendVehicleReminderNotifications extends Command
 
     public function handle()
     {
-        $vehicles = Vehicle::all();
+        $vehicles = Vehicle::with('')->all();
         $now = Carbon::now();
 
         foreach ($vehicles as $vehicle) {
             $dates = [
-                'stnk_date' => $vehicle->stnk_date,
-                'kir_expiry_date' => $vehicle->kir_expiry_date,
-                'bpkb_date' => $vehicle->bpkb_date,
+                'STNK' => $vehicle->stnk_date,
+                'KIR'  => $vehicle->kir_expiry_date,
+                'BPKB' => $vehicle->bpkb_date,
             ];
 
             foreach ($dates as $type => $expireDate) {
@@ -47,30 +52,27 @@ class SendVehicleReminderNotifications extends Command
                     $message = "$type kendaraan {$vehicle->name} akan habis BESOK.";
                 }
 
-if ($message) {
-    Log::info("Create notification for vehicle {$vehicle->name}: $message");
+                if ($message) {
+                    Log::info("Create notification for vehicle {$vehicle->name}: $message");
 
-    $users = User::role(['admin', 'supervisor'])->get();
+                    $users = User::role(['admin', 'supervisor'])->get();
 
-    foreach ($users as $user) {
-        $notif = Notification::create([
-            'user_id' => $user->id,
-            'title' => "Reminder $type",
-            'message' => $message,
-            'link' => url("/setting/vehicle/{$vehicle->id}"),
-        ]);
+                    foreach ($users as $user) {
+                        $notif = Notification::create([
+                            'user_id' => $user->id,
+                            'title' => "Reminder $type",
+                            'message' => $message,
+                            'link' => url("/setting/vehicle/show/{$vehicle->vehicleId}"),
+                        ]);
 
-        Log::info("Notification created for user {$user->id} with ID {$notif->id}");
-
-        broadcast(new VehicleReminderNotification(
-            $user->id,
-            $notif->title,
-            $notif->message,
-            $notif->link
-        ));
-    }
-}
-
+                        broadcast(new VehicleReminderNotification(
+                            $user->id,
+                            $notif->title,
+                            $notif->message,
+                            $notif->link
+                        ));
+                    }
+                }
             }
         }
     }

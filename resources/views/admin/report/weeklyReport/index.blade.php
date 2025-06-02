@@ -126,7 +126,7 @@
                                                 <a href="{{ url('report/weeklyReport/show/' . $week->weekReportId) }}" class="btn btn-warning">
                                                     Validasi Laporan
                                                 </a>
-                                            @elseif($week->status == \App\Models\Report\WeeklyReport\WeeklyReport::STATUS_APPROVE)
+                                            @elseif($week->status != \App\Models\Report\WeeklyReport\WeeklyReport::STATUS_PENDING)
                                                 <a href="{{ url('report/weeklyReport/show/' . $week->weekReportId) }}" class="btn btn-info">
                                                     Lihat Detail
                                                 </a>

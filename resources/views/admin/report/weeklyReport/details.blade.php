@@ -132,12 +132,14 @@
                 </div>
                 <div class="d-flex gap-2 mt-3">
                     <a href="{{ url('/report/weeklyReport') }}" class="btn btn-primary">Kembali</a>
-                    @if($weeklyReport->status === \App\Models\Report\WeeklyReport\WeeklyReport::STATUS_PENDING)
-                        <form action="{{ url('report/weeklyReport/approve/' . $weeklyReport->weekReportId) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-success">Setujui</button>
-                        </form>
-                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal">Tolak</button>
+                    @if(auth()->user()->hasRole(['admin', 'supervisor']))
+                        @if($weeklyReport->status === \App\Models\Report\WeeklyReport\WeeklyReport::STATUS_PENDING)
+                            <form action="{{ url('report/weeklyReport/approve/' . $weeklyReport->weekReportId) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-success">Setujui</button>
+                            </form>
+                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal">Tolak</button>
+                        @endif
                     @endif
                 </div>  
             </div>
@@ -148,7 +150,7 @@
 
 <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <form action="{{ url('report/weeklyReport/reject/' . $weeklyReport->id) }}" method="POST">
+    <form action="{{ url('report/weeklyReport/reject/' . $weeklyReport->weekReportId) }}" method="POST">
         @csrf
         <div class="modal-content">
             <div class="modal-header">

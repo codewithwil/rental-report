@@ -9,6 +9,7 @@ use App\{
     Models\Resources\Company\Company,
     Models\Resources\Vehicle\Vehicle,
     Traits\DbBeginTransac,
+    Models\Notification\Notification
 };
 
 use Illuminate\{
@@ -20,11 +21,14 @@ use Illuminate\{
 class WeeklyReportC extends Controller
 {
     use DbBeginTransac;
-    public function index(){
+    public function index()
+    {
         $weeklyReport = WeeklyReport::with(['user', 'vehicle'])
-                            ->where('status', '!=', WeeklyReport::STATUS_DELETED)
-                            ->orderBy('created_at', 'asc')
-                            ->get();
+            ->where('status', '!=', WeeklyReport::STATUS_DELETED)
+            ->where('user_id', Auth::id())
+            ->orderBy('created_at', 'asc')
+            ->get();
+
         return view('admin.report.weeklyReport.index', compact('weeklyReport'));
     }
 
@@ -58,18 +62,29 @@ class WeeklyReportC extends Controller
         }
     }
 
-      public function reject($weekReportId){
-        try {
-            $weekReport = WeeklyReport::findOrFail($weekReportId);
-            $weekReport->status = WeeklyReport::STATUS_REJECTED;
-            $weekReport->save();
+    public function reject($weekReportId, Request $req)
+    {
+        return $this->executeTransaction(function () use ($req, $weekReportId) {
+            try {
+                $weekReport = WeeklyReport::findOrFail($weekReportId);
+                $weekReport->status = WeeklyReport::STATUS_REJECTED;
+                $weekReport->save();
 
-            return redirect('/report/weeklyReport/')
-                ->with('success', 'Data Laporan Mingguan Ditolak');
-        } catch (\Exception $e) {
-            return redirect('/report/weeklyReport/')
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
-        }
+                Notification::create([
+                    'user_id' => $weekReport->user_id, 
+                    'title'   => 'Laporan Mingguan Ditolak',
+                    'message' => $req->note, 
+                    'link'    => url('/report/weeklyReport/show/' . $weekReport->weekReportId),
+                    'is_read' => false,
+                ]);
+
+                return redirect('/report/weeklyReport/')
+                    ->with('success', 'Data Laporan Mingguan Ditolak');
+            } catch (\Exception $e) {
+                return redirect('/report/weeklyReport/')
+                    ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            }
+        });
     }
 
     public function edit($weeklyReport){

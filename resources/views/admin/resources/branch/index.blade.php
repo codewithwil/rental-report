@@ -97,7 +97,6 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Penanggung Jawab</th>
                                     <th>Email Cabang</th>
                                     <th>Nomor Telepon</th>
                                     <th>Alamat Cabang</th>
@@ -109,7 +108,6 @@
                                 @foreach ($branch as $b)
                                 <tr>
                                     <td data-label="No">{{ $loop->iteration  }}</td>
-                                    <td data-label="Penanggung Jawab">{{ $b->picUser?->supervisor?->name ?? $b->picUser?->employee?->name ?? 'No PIC' }}</td>
                                     <td data-label="Email Cabang">{{ $b->email  }}</td>
                                     <td data-label="Nomor Telepon" class="text-start">{{ $b->phone  }}</td>
                                     <td data-label="Alamat Cabang">{{ $b->address  }}</td>

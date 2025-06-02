@@ -7,11 +7,9 @@ use App\{
     Models\Resources\Branch\Branch,
     Models\Resources\Company\Company,
     Traits\DbBeginTransac,
-    Models\User
 };
 use Illuminate\{
     Http\Request,
-    Support\Facades\Auth,
     Support\Facades\DB,
     Support\Facades\Validator
 };
@@ -21,17 +19,9 @@ class BranchC extends Controller
     use DbBeginTransac;
     public function index()
     {
-        $query = Branch::where('status', Branch::STATUS_ACTIVE)
-                        ->with(['picUser.supervisor', 'picUser.employee'])
-                        ->orderBy('created_at', 'asc');
-
-        if (Auth::user()->hasRole('admin') && Auth::user()->branch_id === null) {
-            $query->where('status', Branch::STATUS_ACTIVE);
-        } else {
-            $query->where('branchId', Auth::user()->branch_id);
-        }
-
-        $branch = $query->get();
+        $branch = Branch::where('status', Branch::STATUS_ACTIVE)
+                        ->orderBy('created_at', 'asc')
+                        ->get();
 
         return view('admin.resources.branch.index', compact('branch'));
     }
@@ -45,21 +35,15 @@ class BranchC extends Controller
 
     public function create()
     {
-        $users = User::whereHas('supervisor')
-                 ->orWhereHas('employee')
-                 ->get();
         $company = Company::first();
-        return view('admin.resources.branch.create', compact('users','company'));
+        return view('admin.resources.branch.create', compact('company'));
     }
 
     public function edit($branchId)
     {
-       $users = User::whereHas('supervisor')
-                 ->orWhereHas('employee')
-                 ->get();
         $company = Company::first();
         $branch  = Branch::findOrFail($branchId);
-        return view('admin.resources.branch.update', compact('users','branch', 'company'));
+        return view('admin.resources.branch.update', compact('branch', 'company'));
     }
 
     public function nearest(Request $request)
@@ -126,7 +110,6 @@ class BranchC extends Controller
     {
         return $this->executeTransaction(function () use ($req) {
             $validator = Validator::make($req->all(), [
-                'user_id'           => 'required|exists:users,id',
                 'company_id'        => 'required|exists:companies,companyId',
                 'address'           => 'required|string|min:3|max:255',
                 'email'             => 'required|email|max:75|unique:branches,email',
@@ -144,7 +127,6 @@ class BranchC extends Controller
             }
             
             Branch::create([
-                'user_id'          => $req->input('user_id'),
                 'company_id'       => $req->input('company_id'),
                 'address'          => $req->input('address'),
                 'email'            => $req->input('email'),
@@ -161,7 +143,6 @@ class BranchC extends Controller
     public function update(Request $req, $branchId)
     {
         $req->validate([
-            'user_id'           => 'nullable|exists:users,id',
             'company_id'        => 'nullable|exists:companies,companyId',
             'address'           => 'nullable|string|min:3|max:255',
             'email'             => 'nullable|email|max:75|unique:branches,email',
@@ -173,8 +154,6 @@ class BranchC extends Controller
 
         return $this->executeTransaction(function () use ($req, $branchId) {
             $branch = Branch::findOrFail($branchId);
-
-            $branch->user_id          = $req->user_id;
             $branch->company_id       = $req->company_id;
             $branch->address          = $req->addressEdit;
             $branch->email            = $req->emailEdit;

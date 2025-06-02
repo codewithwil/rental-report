@@ -67,17 +67,6 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label class="form-label">Penanggung Jawab</label>
-                                        <select id="picUser" name="user_id" class="form-control" autocomplete="off">
-                                            <option value="">-- Pilih Penanggung Jawab --</option>
-                                            @foreach($users as $item)
-                                                <option value="{{ $item->id }}" {{ $branch->user_id == $item->id ? 'selected' : '' }}>
-                                                    {{ $item->supervisor->name ?? $item->employee->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
                                         <label for="addressEdit" class="form-label">Alamat Cabang</label>
                                         <textarea name="addressEdit" id="addressEdit" cols="30" rows="4" class="form-control">{{$branch->address}}</textarea>
                                     </div>
@@ -192,10 +181,6 @@
             });
         });
 
-    </script>
-
-    <script>
-        new TomSelect("#picUser", { placeholder: "Pilih Penanggung Jawab", allowEmptyOption: true });
     </script>
     @endpush
     @endsection

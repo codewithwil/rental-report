@@ -16,4 +16,4 @@ use Illuminate\Support\Facades\Artisan;
 //     $command->handle();
 // });
 
-app(Schedule::class)->command('vehicle:send-reminders')->everyMinute();
+app(Schedule::class)->command('vehicle:send-reminders')->everySixHours();

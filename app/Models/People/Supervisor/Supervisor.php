@@ -2,8 +2,14 @@
 
 namespace App\Models\People\Supervisor;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
+use App\{
+    Models\Scopes\UserBranchScope,
+    Models\User
+};
+
+use Illuminate\{
+    Database\Eloquent\Model
+};
 
 class Supervisor extends Model
 {
@@ -14,5 +20,5 @@ class Supervisor extends Model
     ];
 
     public function user(){return $this->belongsTo(User::class, 'user_id', 'id');}
-    
+    protected static function booted(){static::addGlobalScope(new UserBranchScope);}
 }

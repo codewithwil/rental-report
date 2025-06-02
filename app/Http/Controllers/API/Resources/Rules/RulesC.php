@@ -11,7 +11,6 @@ use App\{
 
 use Illuminate\{
     Http\Request,
-    Support\Facades\DB,
     Support\Facades\Validator,
 };
 

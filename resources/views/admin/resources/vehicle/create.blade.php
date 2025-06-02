@@ -83,11 +83,20 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
+                        <label class="form-label">Penanggung Jawab</label>
+                        <select id="picSelect" name="user_id" class="form-control" placeholder="Pilih Penanggung jawab" autocomplete="off">
+                            <option value="">-- Pilih Penanggung Jawab --</option>
+                            @foreach($users as $s)
+                                <option value="{{ $s->id }}">{{ $s->employee?->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4">
                         <label class="form-label">Nama Kendaraan</label>
                         <input type="text" name="name" class="form-control" maxlength="50" required>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label">Plat Nomor</label>
                         <input type="text" name="plate_number" class="form-control" maxlength="20" required>
                     </div>
@@ -102,30 +111,26 @@
                             @php
                                 $currentYear = date('Y');
                             @endphp
-                            @for ($year = 1900; $year <= $currentYear; $year++)
+                            @for ($year = 1980; $year <= $currentYear; $year++)
                                 <option value="{{ $year }}">{{ $year }}</option>
                             @endfor
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Tanggal Pemeriksaan Terakhir</label>
-                        <input type="date" name="last_inspection_date" class="form-control">
-                    </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label class="form-label">Tanggal Expired KIR</label>
                         <input type="date" name="kir_expiry_date" class="form-control">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label class="form-label">Tanggal Expired STNK</label>
                         <input type="date" name="stnk_date" class="form-control">
                     </div>
-                     <div class="col-md-3">
+                    <div class="col-md-4">
                         <label class="form-label">Tanggal Expired BPKB</label>
                         <input type="date" name="bpkb_date" class="form-control">
                     </div>
                     <div class="col-md-12">
                         <label class="form-label">Catatan</label>
-                        <textarea name="note" class="form-control" rows="3" required></textarea>
+                        <textarea name="note" class="form-control" rows="5" required></textarea>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Foto Kendaraan</label>
@@ -202,6 +207,12 @@
             placeholder: "Pilih Merk",
             allowEmptyOption: true
         });
+
+        new TomSelect("#picSelect", {
+            placeholder: "Pilih Penanggung Jawab",
+            allowEmptyOption: true
+        });
+
 
         new TomSelect("#yearSelect", {
             placeholder: "Pilih Tahun",

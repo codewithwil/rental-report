@@ -2,9 +2,11 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\{
+    Broadcasting\Channel,
+    Contracts\Broadcasting\ShouldBroadcast,
+    Queue\SerializesModels
+};
 
 class TestBroadcastEvent implements ShouldBroadcast
 {

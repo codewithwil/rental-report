@@ -42,7 +42,7 @@
                            <tr>
                                 <th>Dokumen KIR</th>
                                 <td>
-                                    @if($vehicle->kir_document)
+                                    @if($vehicle->vehicleDocument?->kir_document)
                                         <button class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#kirModal">
                                             Lihat Dokumen KIR
                                         </button>
@@ -54,7 +54,7 @@
                             <tr>
                                 <th>Dokumen BPKB</th>
                                 <td>
-                                    @if($vehicle->bpkb_document)
+                                    @if($vehicle->vehicleDocument?->bpkb_document)
                                         <button class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#bpkbModal">
                                             Lihat Dokumen BPKB
                                         </button>
@@ -66,7 +66,7 @@
                             <tr>
                                 <th>Dokumen STNK</th>
                                 <td>
-                                    @if($vehicle->stnk_document)
+                                    @if($vehicle->vehicleDocument?->stnk_document)
                                         <button class="btn btn-link p-0" data-bs-toggle="modal" data-bs-target="#stnkModal">
                                             Lihat Dokumen STNK
                                         </button>
@@ -104,20 +104,16 @@
                                 <td>{{ $vehicle->brand->name ?? '-' }}</td>
                             </tr>
                             <tr>
-                                <th>Tanggal Uji Terakhir</th>
-                                <td>{{ $vehicle->last_inspection_date ?? '-' }}</td>
-                            </tr>
-                            <tr>
                                 <th>Masa Berlaku KIR</th>
-                                <td>{{ $vehicle->kir_expiry_date ?? '-' }}</td>
+                                <td>{{ $vehicle->vehicleDocument->kir_expiry_date ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <th>Tanggal Expired STNK</th>
-                                <td>{{ $vehicle->stnk_date ?? '-' }}</td>
+                                <td>{{ $vehicle->vehicleDocument->stnk_date ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <th>Tanggal Expired BPKB</th>
-                                <td>{{ $vehicle->bpkb_date ?? '-' }}</td>
+                                <td>{{ $vehicle->vehicleDocument->bpkb_date ?? '-' }}</td>
                             </tr>
                             <tr>
                                 <th>Catatan</th>
@@ -161,7 +157,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" style="height: 80vh;">
-                <iframe src="{{ asset('storage/'.$vehicle->kir_document) }}" style="width:100%; height:100%;" frameborder="0"></iframe>
+                <iframe src="{{ asset('storage/'.$vehicle->vehicleDocument?->kir_document) }}" style="width:100%; height:100%;" frameborder="0"></iframe>
             </div>
         </div>
     </div>
@@ -174,7 +170,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" style="height: 80vh;">
-                <iframe src="{{ asset('storage/'.$vehicle->bpkb_document) }}" style="width:100%; height:100%;" frameborder="0"></iframe>
+                <iframe src="{{ asset('storage/'.$vehicle->vehicleDocument?->bpkb_document) }}" style="width:100%; height:100%;" frameborder="0"></iframe>
             </div>
         </div>
     </div>
@@ -188,7 +184,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" style="height: 80vh;">
-                <iframe src="{{ asset('storage/'.$vehicle->stnk_document) }}" style="width:100%; height:100%;" frameborder="0"></iframe>
+                <iframe src="{{ asset('storage/'.$vehicle->vehicleDocument?->stnk_document) }}" style="width:100%; height:100%;" frameborder="0"></iframe>
             </div>
         </div>
     </div>

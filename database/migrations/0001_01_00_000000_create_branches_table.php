@@ -14,7 +14,6 @@ return new class extends Migration
             Schema::create('branches', function (Blueprint $table){
                 $table->engine = "InnoDB";
                 $table->id('branchId');
-                $table->unsignedBigInteger('user_id')->nullable(true);
                 $table->unsignedBigInteger('company_id');
                 $table->text('address');
                 $table->string('email', 75)->unique();

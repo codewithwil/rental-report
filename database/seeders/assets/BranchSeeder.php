@@ -15,7 +15,6 @@ class BranchSeeder extends Seeder
         $company = DB::table('companies')->where('name', 'Rentalku')->first();
         DB::table('branches')->insert([
             [
-                'user_id' => null,
                 'company_id' => $company->companyId,
                 'address' => 'Jalan Kiara Condong No. 456, Bandung, Jawa Barat',
                 'email' => 'lestari@branch.com',
@@ -28,7 +27,6 @@ class BranchSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'user_id' => null,
                 'company_id' => $company->companyId,
                 'address' => 'Jalan Soekarno Hatta No. 789, Bandung, Jawa Barat',
                 'email' => 'kompak@branch.com',

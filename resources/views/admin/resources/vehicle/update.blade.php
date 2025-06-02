@@ -83,11 +83,20 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-6">
+                     <div class="col-md-4">
+                        <label class="form-label">Penanggung Jawab</label>
+                        <select id="picSelect" name="user_id" class="form-control" placeholder="Pilih Penanggung jawab" autocomplete="off">
+                            <option value="">-- Pilih Penanggung Jawab --</option>
+                            @foreach($users as $s)
+                                <option value="{{ $s->id }}" {{ $vehicle->user_id == $s->id ? 'selected' : ''}}>{{ $s->employee?->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-4">
                         <label class="form-label">Nama Kendaraan</label>
                         <input type="text" name="name" class="form-control" maxlength="50" required value="{{ $vehicle->name }}">
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label class="form-label">Plat Nomor</label>
                         <input type="text" name="plate_number" class="form-control" maxlength="20" required value="{{ $vehicle->plate_number }}">
                     </div>
@@ -105,21 +114,17 @@
                             @endfor
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Tanggal Pemeriksaan Terakhir</label>
-                        <input type="date" name="last_inspection_date" class="form-control" value="{{ $vehicle->last_inspection_date }}">
-                    </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label class="form-label">Tanggal Expired KIR</label>
-                        <input type="date" name="kir_expiry_date" class="form-control" value="{{ $vehicle->kir_expiry_date }}">
+                        <input type="date" name="kir_expiry_date" class="form-control" value="{{ $vehicle->vehicleDocument?->kir_expiry_date }}">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label class="form-label">Tanggal Expired STNK</label>
-                        <input type="date" name="stnk_date" class="form-control" value="{{ $vehicle->stnk_date }}">
+                        <input type="date" name="stnk_date" class="form-control" value="{{ $vehicle->vehicleDocument?->stnk_date }}">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label class="form-label">Tanggal Expired BPKB</label>
-                        <input type="date" name="bpkb_date" class="form-control" value="{{ $vehicle->bpkb_date }}">
+                        <input type="date" name="bpkb_date" class="form-control" value="{{ $vehicle->vehicleDocument?->bpkb_date }}">
                     </div>
                     <div class="col-md-12">
                         <label class="form-label">Catatan</label>
@@ -203,9 +208,9 @@
         allowMultiple: false,
         acceptedFileTypes: ['application/pdf'],
         files: [
-            @if($vehicle->kir_document)
+            @if($vehicle->vehicleDocument->kir_document)
             {
-                source: '{{ asset('storage/' . $vehicle->kir_document) }}',
+                source: '{{ asset('storage/' . $vehicle->vehicleDocument->kir_document) }}',
             }
             @endif
         ]
@@ -215,9 +220,9 @@
         allowMultiple: false,
         acceptedFileTypes: ['application/pdf'],
         files: [
-            @if($vehicle->stnk_document)
+            @if($vehicle->vehicleDocument->stnk_document)
             {
-                source: '{{ asset('storage/' . $vehicle->stnk_document) }}',
+                source: '{{ asset('storage/' . $vehicle->vehicleDocument->stnk_document) }}',
             }
             @endif
         ]
@@ -227,9 +232,9 @@
         allowMultiple: false,
         acceptedFileTypes: ['application/pdf'],
         files: [
-            @if($vehicle->bpkb_document)
+            @if($vehicle->vehicleDocument->bpkb_document)
             {
-                source: '{{ asset('storage/' . $vehicle->bpkb_document) }}',
+                source: '{{ asset('storage/' . $vehicle->vehicleDocument->bpkb_document) }}',
             }
             @endif
         ]
@@ -238,6 +243,7 @@
     new TomSelect("#branchSelect", { placeholder: "Pilih Cabang", allowEmptyOption: true });
     new TomSelect("#categorySelect", { placeholder: "Pilih Kategori", allowEmptyOption: true });
     new TomSelect("#brandSelect", { placeholder: "Pilih Merk", allowEmptyOption: true });
+    new TomSelect("#picSelect", { placeholder: "Pilih Penanggung Jawab", allowEmptyOption: true });
     new TomSelect("#yearSelect", { placeholder: "Pilih Tahun", allowEmptyOption: true });
 </script>
 @endpush

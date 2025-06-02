@@ -11,6 +11,7 @@ use App\{
 };
 use App\Models\Notification\Notification;
 use App\Models\Report\WeeklyReport\WeeklyReport;
+use App\Models\Resources\Vehicle\Vehicle;
 use Illuminate\{
     Database\Eloquent\Factories\HasFactory,
     Foundation\Auth\User as Authenticatable,
@@ -44,12 +45,12 @@ use HasFactory, Notifiable, HasRoles;
     }
 
     public function branch(){return $this->belongsTo(Branch::class, 'branch_id', 'branchId');}
-    public function picBranch(){return $this->hasMany(Branch::class, 'user_id');}
     public function admin(){return $this->hasOne(Admin::class, 'user_id');}
     public function supervisor(){return $this->hasOne(Supervisor::class, 'user_id');}
     public function employee(){return $this->hasOne(EmployeeEmployee::class, 'user_id');}
     public function weeklyReport(){return $this->hasOne(WeeklyReport::class, 'user_id');}
     public function notification(){return $this->hasOne(Notification::class, 'user_id');}
+    public function vehicle(){return $this->hasOne(Vehicle::class, 'user_id');}
     public function realName()
     {
         if ($this->hasRole('admin') && $this->admin) {

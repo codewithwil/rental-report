@@ -18,7 +18,7 @@
   <div class="app-content">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-lg-3 col-6">
+        <div class="col-lg-4 col-6">
           <div class="small-box text-bg-success">
             <div class="inner">
               <h3>{{ $branch }}<sup class="fs-5"></sup></h3>
@@ -36,7 +36,7 @@
               ></path>
             </svg>
             <a
-              href="#"
+              href="{{url('/setting/branch')}}"
               class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover"
             >
               More info <i class="bi bi-link-45deg"></i>
@@ -45,8 +45,8 @@
           <!--end::Small Box Widget 2-->
         </div>
 
-          <div class="col-lg-3 col-6">
-          <div class="small-box text-bg-success">
+        <div class="col-lg-4 col-6">
+          <div class="small-box text-bg-primary">
             <div class="inner">
               <h3>{{ $vehicle }}<sup class="fs-5"></sup></h3>
               <p>Kendaraan</p>
@@ -59,20 +59,20 @@
               aria-hidden="true"
             >
               <path
-                d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z"
+                d="M4.5 13.5a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zm12 0a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM3 7.5A3 3 0 016 4.5h12a3 3 0 013 3v6a1.5 1.5 0 01-1.5 1.5h-.75v1.5a1.5 1.5 0 01-3 0V15H7.5v1.5a1.5 1.5 0 01-3 0V15H3.75A1.5 1.5 0 012.25 13.5v-6z"
               ></path>
             </svg>
             <a
-              href="#"
+              href="{{url('/setting/vehicle')}}"
               class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover"
             >
               More info <i class="bi bi-link-45deg"></i>
             </a>
           </div>
-          <!--end::Small Box Widget 2-->
         </div>
+
         <!--end::Col-->
-        <div class="col-lg-3 col-6">
+        <div class="col-lg-4 col-6">
           <!--begin::Small Box Widget 3-->
           <div class="small-box text-bg-warning">
             <div class="inner">
@@ -91,14 +91,26 @@
               ></path>
             </svg>
             <a
-              href="#"
+              href="/people/users"
               class="small-box-footer link-dark link-underline-opacity-0 link-underline-opacity-50-hover"
             >
               More info <i class="bi bi-link-45deg"></i>
             </a>
           </div>
         </div>
-        
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Grafik Laporan Mingguan</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -127,14 +139,57 @@
     </div>
   </div>
 
-  @push('js')
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var rulesModal = new bootstrap.Modal(document.getElementById('rulesModal'));
-      rulesModal.show();
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var ctx = document.getElementById('statusChart').getContext('2d');
+
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: @json($chartDates),
+            datasets: [
+                {
+                    label: 'Laporan perlu divalidasi',
+                    data: @json(collect($chartData)->map(fn($d) => $d['pending'])->values()),
+                    borderColor: 'rgba(255, 206, 86, 1)',
+                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                    tension: 0.3,
+                    fill: true
+                },
+                {
+                    label: 'Laporan disetujui',
+                    data: @json(collect($chartData)->map(fn($d) => $d['approve'])->values()),
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.3,
+                    fill: true
+                },
+                {
+                    label: 'Laporan ditolak',
+                    data: @json(collect($chartData)->map(fn($d) => $d['rejected'])->values()),
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    tension: 0.3,
+                    fill: true
+                },
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    stepSize: 1
+                }
+            }
+        }
     });
-  </script>
-  @endpush
+
+    var rulesModal = new bootstrap.Modal(document.getElementById('rulesModal'));
+    rulesModal.show();
+});
+</script>
+
   
 @endsection

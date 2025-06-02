@@ -78,12 +78,14 @@
                 <p>Peraturan Perusahaan</p>
               </a>
             </li>
+            @if(auth()->user()->hasRole(['admin']))
             <li class="nav-item">
               <a href="{{ url('setting/branch') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Cabang</p>
               </a>
             </li>
+            @endif
             <li class="nav-item">
               <a href="{{ url('setting/category') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>

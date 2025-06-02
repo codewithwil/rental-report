@@ -2,8 +2,14 @@
 
 namespace App\Models\People\Employee;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
+use App\{
+    Models\Scopes\UserBranchScope,
+    Models\User
+};
+
+use Illuminate\{
+    Database\Eloquent\Model
+};
 
 class Employee extends Model
 {
@@ -28,5 +34,5 @@ class Employee extends Model
         return $labels[$this->gender] ?? 'Tidak Diketahui';
     }
     
-
+    protected static function booted(){static::addGlobalScope(new UserBranchScope);}
 }
