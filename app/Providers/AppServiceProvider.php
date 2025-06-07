@@ -5,12 +5,15 @@ namespace App\Providers;
 use App\{
     Repositories\Contracts\Auth\AuthRepositoryContract,
     Repositories\Eloquent\Auth\AuthRepository,
+    Models\Notification\Notification
 
 };
-use App\Models\Notification\Notification;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\ServiceProvider;
+
+use Illuminate\{
+    Support\Facades\Auth,
+    Support\Facades\View,
+    Support\ServiceProvider
+};
 
 class AppServiceProvider extends ServiceProvider
 {

@@ -2,8 +2,13 @@
 
 namespace App\Models\People\Admin;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
+use App\{
+    Models\User
+};
+
+use Illuminate\{
+    Database\Eloquent\Model
+};
 
 class Admin extends Model
 {

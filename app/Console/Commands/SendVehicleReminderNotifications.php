@@ -20,27 +20,31 @@ class SendVehicleReminderNotifications extends Command
     protected $signature = 'vehicle:send-reminders';
     protected $description = 'Send vehicle document expiration reminders';
 
-    public function handle()
+public function handle()
     {
-        $vehicles = Vehicle::with('')->all();
+        $vehicles = Vehicle::with('vehicleDocument')->get();
         $now = Carbon::now();
 
         foreach ($vehicles as $vehicle) {
+            $doc = $vehicle->vehicleDocument;
+
+            if (!$doc) continue; 
+
             $dates = [
-                'STNK' => $vehicle->stnk_date,
-                'KIR'  => $vehicle->kir_expiry_date,
-                'BPKB' => $vehicle->bpkb_date,
+                'STNK' => $doc->stnk_date,
+                'KIR'  => $doc->kir_expiry_date,
+                'BPKB' => $doc->bpkb_date,
             ];
 
             foreach ($dates as $type => $expireDate) {
                 if (!$expireDate) continue;
 
                 $diff = $now->diffInDays(Carbon::parse($expireDate), false);
-                 Log::info("Vehicle {$vehicle->name} $type expires in $diff days.");
+                Log::info("Vehicle {$vehicle->name} $type expires in $diff days.");
 
                 $message = null;
 
-               if ($diff > 29 && $diff <= 30) {
+                if ($diff > 29 && $diff <= 30) {
                     $message = "$type kendaraan {$vehicle->name} akan habis 1 bulan lagi.";
                 } elseif ($diff <= 14 && $diff >= 13) {
                     $message = "$type kendaraan {$vehicle->name} akan habis 2 minggu lagi.";
@@ -55,9 +59,10 @@ class SendVehicleReminderNotifications extends Command
                 if ($message) {
                     Log::info("Create notification for vehicle {$vehicle->name}: $message");
 
-                    $users = User::role(['admin', 'supervisor'])->get();
+                    $userId = $vehicle->user_id;
+                    $user = User::find($userId);
 
-                    foreach ($users as $user) {
+                    if ($user) {
                         $notif = Notification::create([
                             'user_id' => $user->id,
                             'title' => "Reminder $type",

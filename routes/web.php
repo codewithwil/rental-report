@@ -23,7 +23,7 @@ Route::middleware(['guest'])->group(function(){
 
 
 Route::middleware(['auth'])->group(function(){
-    Route::get('/logout', [AuthC::class, 'logout'])->name('logout');
+    Route::get('/logout', [AuthC::class, 'logout'])->middleware('throttle:3,60')->name('logout');
     Route::get('/dashboard', [DashboardC::class, 'index'])->name('dashboard');
 
     Route::group(["prefix" => "/notification", "as" => "notification."], __DIR__ . "/web/notification/index.php");

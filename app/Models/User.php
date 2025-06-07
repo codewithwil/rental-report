@@ -4,14 +4,14 @@ namespace App\Models;
 
 use App\{
     Models\People\Admin\Admin,
-    Models\People\Customers\Customers,
     Models\People\Employee\Employee as EmployeeEmployee,
     Models\People\Supervisor\Supervisor,
     Models\Resources\Branch\Branch,
+    Models\Notification\Notification,
+    Models\Report\WeeklyReport\WeeklyReport,
+    Models\Resources\Vehicle\Vehicle,
 };
-use App\Models\Notification\Notification;
-use App\Models\Report\WeeklyReport\WeeklyReport;
-use App\Models\Resources\Vehicle\Vehicle;
+
 use Illuminate\{
     Database\Eloquent\Factories\HasFactory,
     Foundation\Auth\User as Authenticatable,
