@@ -6,7 +6,8 @@ use App\{
     Http\Controllers\Controller,
     Models\Resources\Brand\Brand,
     Models\Resources\Company\Company,
-    Traits\DbBeginTransac
+    Traits\DbBeginTransac,
+    Models\History\ActivityLog\ActivityLog
 };
 
 use Illuminate\{
@@ -51,9 +52,14 @@ class BrandC extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            Brand::create([
+            $brand = Brand::create([
                 'name' => $req->input('name'),
             ]);
+
+            $brand->logActivity(
+                ActivityLog::ACTION_CREATE,
+                "Merk {$brand->name} berhasil ditambahkan"
+            );
 
             return response()->json([
                 'success' => true,
@@ -73,7 +79,10 @@ class BrandC extends Controller
             $brand = Brand::findOrFail($brandId);
             $brand->name = $req->name;
             $brand->save();
-
+            $brand->logActivity(
+                ActivityLog::ACTION_UPDATE,
+                "Merk {$brand->name} berhasil diperbarui"
+            );
             return redirect('/setting/brand/')
                 ->with('success', 'Data Merek Kendaraan berhasil diperbarui.');
         });
@@ -86,7 +95,10 @@ class BrandC extends Controller
             $brand = Brand::findOrFail($brandId);
             $brand->status = Brand::STATUS_INACTIVE;
             $brand->save();
-
+            $brand->logActivity(
+               ActivityLog::ACTION_DELETE,
+                "Merk {$brand->name} telah dihapus"
+            );
             return redirect('/setting/brand/')
                 ->with('success', 'Data Merek Kendaraan Berhasil Dihapus');
         } catch (\Exception $e) {

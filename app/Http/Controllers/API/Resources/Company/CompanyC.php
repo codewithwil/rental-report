@@ -4,15 +4,11 @@ namespace App\Http\Controllers\API\Resources\Company;
 
 use App\{
     Http\Controllers\Controller,
-    Services\Resources\Company\CompanyService
 };
+use App\Models\History\ActivityLog\ActivityLog;
 use App\Models\Resources\Company\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-
-use function PHPUnit\Framework\isArray;
-
 class CompanyC extends Controller
 {
 
@@ -20,8 +16,6 @@ class CompanyC extends Controller
         $company = Company::first();
         return view('admin.resources.company.index', compact('company'));
     }
-
-
 
     public function store(Request $request)
     {
@@ -46,6 +40,10 @@ class CompanyC extends Controller
                 }
     
                 $company->save();
+                $company->logActivity(
+                    ActivityLog::ACTION_CREATE,
+                    "Perusahaan {$company->name} berhasil ditambahkan"
+                );
             } else {
                 if ($request->hasFile('image')) {
                     if ($company->image) {
@@ -63,6 +61,12 @@ class CompanyC extends Controller
                     $validatedData['image'] = $filePath;
                 }
                 $company->update($validatedData);
+                
+                $company->logActivity(
+                    ActivityLog::ACTION_UPDATE,
+                    "Perusahaan {$company->name} berhasil diperbarui"
+                );
+
             }
             DB::commit();
             return redirect()->back()->with('success', 'Data perusahaan berhasil disimpan.');
@@ -72,7 +76,4 @@ class CompanyC extends Controller
             return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()]);
         }
     }
-    
-    
-    
 }

@@ -6,7 +6,8 @@ use App\{
     Http\Controllers\Controller,
     Models\Resources\Company\Company,
     Models\Resources\Rules\Rules,
-    Traits\DbBeginTransac
+    Traits\DbBeginTransac,
+    Models\History\ActivityLog\ActivityLog,
 };
 
 use Illuminate\{
@@ -48,9 +49,14 @@ class RulesC extends Controller
                 return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $validator->getMessage());
             }
 
-            Rules::create([
+            $rules = Rules::create([
                 'content' => $req->input('content'),
             ]);
+
+            $rules->logActivity(
+                ActivityLog::ACTION_CREATE,
+                "Peraturan Perusahaan {$rules->name} berhasil ditambahkan"
+            );
 
             return redirect('/setting/rules')
                 ->with('success', 'Data Aturan Perusahaan berhasil ditambahkan!');
@@ -67,6 +73,11 @@ class RulesC extends Controller
             $rules = Rules::findOrFail($rulesId);
             $rules->content = $req->content;
             $rules->save();
+
+            $rules->logActivity(
+                ActivityLog::ACTION_UPDATE,
+                "Peraturan Perusahaan berhasil diperbarui"
+            );
 
             return redirect('/setting/rules/')
                 ->with('success', 'Data Aturan Perusahaan berhasil diperbarui.');

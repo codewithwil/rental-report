@@ -1,18 +1,18 @@
 <?php
 
-use App\Http\Controllers\API\Auth\AuthC;
-use App\Http\Controllers\API\Dashboard\DashboardC;
-use App\Http\Controllers\API\Front\FrontC;
-use Illuminate\Support\Facades\Route;
-use App\Events\TestBroadcastEvent;
-use App\Http\Controllers\API\Notification\NotificationC;
-use App\Models\Notification\Notification;
-use Illuminate\Support\Facades\Broadcast;
+use App\{
+    Http\Controllers\API\Auth\AuthC,
+    Http\Controllers\API\Dashboard\DashboardC
+};
+
+use Illuminate\{
+    Support\Facades\Route
+};
+
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('admin.auth.login');
 });
-
 
 Route::middleware(['guest'])->group(function(){
     Route::get('/login', [AuthC::class, 'index'])->name('login');
@@ -31,5 +31,6 @@ Route::middleware(['auth'])->group(function(){
     Route::group(["prefix" => "/configuration", "as" => "configuration."], __DIR__ . "/web/configuration/index.php");
     Route::group(["prefix" => "/setting", "as" => "setting."], __DIR__ . "/web/setting/index.php");
     Route::group(["prefix" => "/report", "as" => "report."], __DIR__ . "/web/report/index.php");
+    Route::group(["prefix" => "/history", "as" => "history."], __DIR__ . "/web/history/index.php");
 });
 

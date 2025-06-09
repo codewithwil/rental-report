@@ -7,6 +7,7 @@ use App\{
     Models\Resources\Category\Category,
     Models\Resources\Company\Company,
     Traits\DbBeginTransac,
+    Models\History\ActivityLog\ActivityLog,
 };
 
 use Illuminate\{
@@ -52,10 +53,15 @@ class CategoryC extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            Category::create([
+            $category = Category::create([
                 'name' => $req->input('name'),
                 'type' => $req->input('type'),
             ]);
+
+            $category->logActivity(
+                ActivityLog::ACTION_CREATE,
+                "Kategori {$category->name} berhasil ditambahkan"
+            );
 
             return response()->json(['success' => true, 'message' => 'Data Kategori berhasil ditambahkan!']);
         });
@@ -73,7 +79,11 @@ class CategoryC extends Controller
             $category->name = $req->name;
             $category->type = $req->type;
             $category->save();
-
+            $category->logActivity(
+                ActivityLog::ACTION_UPDATE,
+                "Kategori {$category->name} berhasil diperbarui"
+            );
+            
             return redirect('/setting/category/')
                 ->with('success', 'Data Kategori berhasil diperbarui.');
         });
@@ -86,6 +96,11 @@ class CategoryC extends Controller
             $category = Category::findOrFail($categoryId);
             $category->status = Category::STATUS_INACTIVE;
             $category->save();
+
+            $category->logActivity(
+               ActivityLog::ACTION_DELETE,
+                "Kategori {$category->name} telah dihapus"
+            );
 
             return redirect('/setting/category/')
                 ->with('success', 'Data Kategori Berhasil Dihapus');

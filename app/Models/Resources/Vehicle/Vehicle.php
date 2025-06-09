@@ -8,7 +8,8 @@ use App\{
     Models\Resources\Category\Category,
     Models\Report\WeeklyReport\WeeklyReport,
     Models\User,
-    Models\Scopes\UserBranchScope
+    Models\Scopes\UserBranchScope,
+    Traits\ActivityLogs
 };
 
 use Illuminate\{
@@ -17,6 +18,7 @@ use Illuminate\{
 
 class Vehicle extends Model
 {
+    use ActivityLogs;
     const STATUS_DELETED  = 0;
     const STATUS_INACTIVE = 1;
     const STATUS_ACTIVE   = 2;
@@ -30,6 +32,7 @@ class Vehicle extends Model
         'bpkb_document', 'stnk_document', 'note', 'status'
     ];
 
+    protected static function boot(){parent::boot();}
     public function user(){return $this->belongsTo(User::class, 'user_id', 'id');}
     public function branch(){return $this->belongsTo(Branch::class, 'branch_id', 'branchId');}
     public function category(){return $this->belongsTo(Category::class, 'category_id', 'categoryId');}

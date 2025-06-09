@@ -4,6 +4,37 @@
 @section('content')
 @push('css')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        .media-box {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 100%;
+            background-color: #f9f9f9;
+        }
+
+        .media-box img,
+        .media-box video {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .media-box-body {
+            padding: 12px;
+        }
+
+        .media-box-title {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .media-box-text {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+    </style>
 @endpush
 
 <div class="app-content-header">
@@ -92,37 +123,26 @@
                 <div class="card mb-4">
                     <div class="card-header"><h3 class="card-title">Detail Komponen Laporan</h3></div>
                     <div class="card-body">
-                        <div class="accordion" id="accordionComponents">
-                            @foreach($weeklyReport->weeklyReportDetail ?? [] as $index => $detail)
-                                @php $uniqueId = 'component-' . $loop->index; @endphp
-                                <div class="accordion-item mb-2">
-                                    <h2 class="accordion-header" id="heading-{{ $uniqueId }}">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ $uniqueId }}" aria-expanded="false" aria-controls="collapse-{{ $uniqueId }}">
-                                            Komponen: {{ ucfirst($detail->component) }} | Posisi: {{ $detail->position }}
-                                        </button>
-                                    </h2>
-                                    <div id="collapse-{{ $uniqueId }}" class="accordion-collapse collapse" aria-labelledby="heading-{{ $uniqueId }}" data-bs-parent="#accordionComponents">
-                                        <div class="accordion-body">
-                                            <p><strong>Komponen:</strong> {{ ucfirst($detail->component) }}</p>
-                                            <p><strong>Posisi:</strong> {{ $detail->position }}</p>
-                                            <p><strong>Jenis File:</strong> {{ $detail->file_type }}</p>
-                                            <p><strong>Preview:</strong></p>
-                                           @if(Str::startsWith($detail->file_type, 'image'))
-                                                <img src="{{ asset('storage/' . $detail->file_path) }}" 
-                                                    alt="preview" 
-                                                    class="img-thumbnail preview-image" 
-                                                    style="max-height: 150px; cursor: pointer;"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#imageModal"
-                                                    data-bs-image="{{ asset('storage/' . $detail->file_path) }}">
-                                            @elseif(Str::startsWith($detail->file_type, 'video'))
-                                                <video controls style="max-height: 200px;">
-                                                    <source src="{{ asset('storage/' . $detail->file_path) }}" type="{{ $detail->file_type }}">
-                                                    Browser tidak mendukung video.
-                                                </video>
-                                            @else
-                                                <p>Tidak dapat menampilkan file.</p>
-                                            @endif
+                        <div class="row row-cols-1 row-cols-md-3 g-3">
+                            @foreach($weeklyReport->weeklyReportDetail ?? [] as $detail)
+                                <div class="col">
+                                    <div class="media-box">
+                                        @if(Str::startsWith($detail->file_type, 'image'))
+                                            <img src="{{ asset('storage/' . $detail->file_path) }}" 
+                                                alt="Preview Gambar" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#imageModal" 
+                                                data-bs-image="{{ asset('storage/' . $detail->file_path) }}">
+                                        @elseif(Str::startsWith($detail->file_type, 'video'))
+                                            <video controls>
+                                                <source src="{{ asset('storage/' . $detail->file_path) }}" type="{{ $detail->file_type }}">
+                                                Browser tidak mendukung video.
+                                            </video>
+                                        @endif
+                                        <div class="media-box-body">
+                                            <div class="media-box-title">{{ ucfirst($detail->component) }}</div>
+                                            <div class="media-box-text"><strong>Posisi:</strong> {{ $detail->position }}</div>
+                                            <div class="media-box-text"><strong>Tipe File:</strong> {{ $detail->file_type }}</div>
                                         </div>
                                     </div>
                                 </div>

@@ -9,7 +9,7 @@ use App\{
     Models\User,
     Traits\DbBeginTransac
 };
-
+use App\Models\History\ActivityLog\ActivityLog;
 use Illuminate\{
     Http\Request,
     Support\Facades\Hash,
@@ -59,7 +59,7 @@ class AdminC extends Controller
             'password' => 'required|min:6',
             'name'     => 'required|string|max:255',
             'telepon'  => 'required|numeric',
-            'role'     => 'required|in:admin,supervisor,petugas,owner,pengguna',
+            'role'     => 'required|in:admin',
             'foto'     => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
@@ -80,17 +80,21 @@ class AdminC extends Controller
 
                 $user->assignRole($request->input('role'));
 
-                $fotoPath = null;
-                if ($request->hasFile('foto')) {
-                    $fotoPath = $request->file('foto')->store('admin_foto', 'public');
-                }
+                $fotoPath = $request->hasFile('foto')
+                    ? $request->file('foto')->store('admin_foto', 'public')
+                    : null;
 
-                Admin::create([
+                $admin = Admin::create([
                     'user_id' => $user->id,
                     'name'    => $request->input('name'),
                     'telepon' => $request->input('telepon'),
                     'foto'    => $fotoPath,
                 ]);
+
+                $admin->logActivity(
+                    ActivityLog::ACTION_CREATE,
+                    "Admin {$admin->name} berhasil ditambahkan dengan email {$user->email}"
+                );
 
                 return response()->json([
                     'success' => true,
@@ -109,7 +113,7 @@ class AdminC extends Controller
     {
         $request->validate([
             'email'     => 'nullable|email',
-            'name'      => 'nullable|string|max:255',
+            'name'      => 'nullable|string|max:75',
             'telepon'   => 'nullable|digits_between:10,15',
             'password'  => 'nullable|min:8',
             'role'      => 'nullable|exists:roles,name',
@@ -124,9 +128,11 @@ class AdminC extends Controller
                 if ($request->filled('email')) {
                     $user->email = $request->email;
                 }
+
                 if ($request->filled('password')) {
                     $user->password = Hash::make($request->password);
                 }
+
                 $user->save();
 
                 if ($request->filled('role')) {
@@ -145,14 +151,18 @@ class AdminC extends Controller
                 $admin->telepon = $request->telepon;
                 $admin->save();
 
+                $admin->logActivity(
+                    ActivityLog::ACTION_UPDATE,
+                    "Admin {$admin->name} berhasil diperbarui"
+                );
+
                 return redirect('/people/admin')->with('success', 'Data user berhasil diperbarui.');
             });
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-  
-    
+
     public function delete($adminId)
     {
         try {
@@ -165,6 +175,11 @@ class AdminC extends Controller
                 if ($admin->foto && Storage::exists('public/' . $admin->foto)) {
                     Storage::delete('public/' . $admin->foto);
                 }
+
+                $admin->logActivity(
+                    ActivityLog::ACTION_DELETE,
+                    "Admin {$admin->name} dengan email {$user->email} telah dihapus"
+                );
 
                 $admin->delete();
                 $user->delete();

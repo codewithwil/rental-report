@@ -4,7 +4,8 @@ namespace App\Models\People\Employee;
 
 use App\{
     Models\Scopes\UserBranchScope,
-    Models\User
+    Models\User,
+    Traits\ActivityLogs
 };
 
 use Illuminate\{
@@ -13,6 +14,7 @@ use Illuminate\{
 
 class Employee extends Model
 {
+    use ActivityLogs;
     const JENKEL_LAKILAKI  = 0;
     const JENKEL_PEREMPUAN = 1;
     protected $table       = 'employees';
@@ -22,8 +24,9 @@ class Employee extends Model
         'birthdate', 'hire_date', 'salary', 'status'
     ];
 
+    protected static function boot(){parent::boot();}
+    protected static function booted(){static::addGlobalScope(new UserBranchScope);}
     public function user(){return $this->belongsTo(User::class, 'user_id', 'id');}
-
     public function getGenderLabelAttribute()
     {
         $labels = [
@@ -33,6 +36,4 @@ class Employee extends Model
     
         return $labels[$this->gender] ?? 'Tidak Diketahui';
     }
-    
-    protected static function booted(){static::addGlobalScope(new UserBranchScope);}
 }

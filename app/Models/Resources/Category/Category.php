@@ -3,7 +3,8 @@
 namespace App\Models\Resources\Category;
 
 use App\{
-    Models\Resources\Vehicle\Vehicle
+    Models\Resources\Vehicle\Vehicle,
+    Traits\ActivityLogs
 };
 
 use Illuminate\{
@@ -12,6 +13,7 @@ use Illuminate\{
 
 class Category extends Model
 {
+    use ActivityLogs;
     const TYPE_CAR        = 1;
     const TYPE_MOTORCYCLE = 2;
     const STATUS_INACTIVE = 0;
@@ -22,6 +24,7 @@ class Category extends Model
         'name', 'status', 'type'
     ];
 
+    protected static function boot(){parent::boot();}
     public function vehicle(){return $this->hasMany(Vehicle::class, 'category_id', 'categoryId');}
     public function getTypeLabelAttribute()
     {

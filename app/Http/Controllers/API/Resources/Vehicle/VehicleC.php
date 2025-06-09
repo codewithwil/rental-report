@@ -12,14 +12,14 @@ use App\{
     Models\Resources\Category\Category,
     Models\User,
     Models\Resources\Vehicle\VehicleDocument,
-    Traits\AsignFile
+    Traits\AsignFile,
+    Models\History\ActivityLog\ActivityLog
 };
 
 use Illuminate\{
     Http\Request,
     Support\Facades\Validator,
 };
-use Illuminate\Support\Facades\Auth;
 
 class VehicleC extends Controller
 {
@@ -106,7 +106,10 @@ class VehicleC extends Controller
                 );
 
                 $vehicle->save();
-
+                $vehicle->logActivity(
+                    ActivityLog::ACTION_CREATE,
+                    "Kendaraan {$vehicle->name} berhasil ditambahkan"
+                );  
                 $vehicleDoc = new VehicleDocument([
                     'vehicle_id'      => $vehicle->vehicleId,
                     'kir_expiry_date' => $req->kir_expiry_date,
@@ -168,7 +171,10 @@ class VehicleC extends Controller
                 $vehicleFields = ['branch_id', 'category_id', 'brand_id', 'name', 'plate_number', 'color', 'year', 'note', 'status'];
                 $this->assignFields($vehicle, $req, $vehicleFields);
                 $vehicle->save();
-
+                $vehicle->logActivity(
+                    ActivityLog::ACTION_UPDATE,
+                    "Kendaraan {$vehicle->name} berhasil diperbarui"
+                );
                 if ($vehicleDoc) {
                     if ($req->filled('kir_document')) {
                         $vehicleDoc->kir_document = $this->saveBase64File(
@@ -215,7 +221,10 @@ class VehicleC extends Controller
             $vehicle = Vehicle::findOrFail($vehicleId);
             $vehicle->status = Vehicle::STATUS_DELETED;
             $vehicle->save();
-
+            $vehicle->logActivity(
+               ActivityLog::ACTION_DELETE,
+                "Kendaraan {$vehicle->name} telah dihapus"
+            );
             return redirect('/setting/vehicle/')
                 ->with('success', 'Data Kendaraan Berhasil Dihapus');
         } catch (\Exception $e) {

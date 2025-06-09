@@ -34,8 +34,8 @@ class DatabaseSeeder extends Seeder
             ]);
                 DB::commit();
         } catch (\Throwable $th) {
-        DB::rollBack();
-        dd($th);
+            DB::rollBack();
+            dd($th);
         }
     }
 }

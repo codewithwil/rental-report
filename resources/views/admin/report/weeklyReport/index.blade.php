@@ -84,6 +84,8 @@
                         <a href="{{ url('report/weeklyReport/create') }}" class="btn btn-success ms-3 mt-3">
                             Tambah
                         </a>
+                        @endif
+                        @if(auth()->user()->hasRole(['admin', 'supervisor']))
                         <a href="{{ url('report/weeklyReport/invoice') }}" class="btn btn-secondary ms-3 mt-3">
                             Invoice
                         </a>

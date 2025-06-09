@@ -8,7 +8,8 @@ use App\{
     Models\Resources\Branch\Branch,
     Models\Resources\Company\Company,
     Models\User,
-    Traits\DbBeginTransac
+    Traits\DbBeginTransac,
+    Models\History\ActivityLog\ActivityLog
 };
 
 use Illuminate\{
@@ -86,12 +87,17 @@ class SupervisorC extends Controller
                     ? $request->file('foto')->store('supervissor_foto', 'public')
                     : null;
 
-                Supervisor::create([
+                $supervisor = Supervisor::create([
                     'user_id' => $user->id,
                     'name'    => $request->input('name'),
                     'telepon' => $request->input('telepon'),
                     'foto'    => $fotoPath,
                 ]);
+
+                $supervisor->logActivity(
+                    ActivityLog::ACTION_CREATE,
+                    "Supervisor {$supervisor->name} berhasil ditambahkan dengan email {$user->email}"
+                );
 
                 return response()->json([
                     'success' => true,
@@ -160,6 +166,11 @@ class SupervisorC extends Controller
 
                 $supervisor->save();
 
+                $supervisor->logActivity(
+                    ActivityLog::ACTION_UPDATE,
+                    "Supervisor {$supervisor->name} berhasil diperbarui"
+                );
+
                 return redirect('/people/supervisor')->with('success', 'Data user berhasil diperbarui.');
             });
         } catch (\Exception $e) {
@@ -177,7 +188,10 @@ class SupervisorC extends Controller
             if ($supervisor->foto && Storage::exists('public/' . $supervisor->foto)) {
                 Storage::delete('public/' . $supervisor->foto);
             }
-    
+            $supervisor->logActivity(
+                    ActivityLog::ACTION_DELETE,
+                    "Supervisor {$supervisor->name} dengan email {$user->email} telah dihapus"
+            );
             $supervisor->delete();
             $user->delete();
     

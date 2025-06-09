@@ -61,7 +61,32 @@
         </li>
         @endif
 
-        @if(auth()->user()->hasRole(['admin', 'supervisor']))
+        @if(auth()->user()->hasRole(['admin']))
+        <li class="nav-header text-muted text-uppercase small mt-3">Riwayat</li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="nav-icon bi bi-clock-history"></i>
+            <p>
+              Riwayat
+              <i class="nav-arrow bi bi-chevron-right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview ps-4">
+            <li class="nav-item">
+              <a href="{{ url('history/notification/') }}" class="nav-link">
+                <i class="nav-icon bi bi-circle"></i>
+                <p>Notifikasi</p>
+              </a>
+            </li>
+             <li class="nav-item">
+              <a href="{{ url('history/activities/') }}" class="nav-link">
+                <i class="nav-icon bi bi-circle"></i>
+                <p>Log Aktivitas</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+
         <li class="nav-header text-muted text-uppercase small mt-3">Setting</li>
         <li class="nav-item">
           <a href="#" class="nav-link">

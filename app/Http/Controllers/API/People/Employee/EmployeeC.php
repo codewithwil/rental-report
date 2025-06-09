@@ -8,7 +8,8 @@ use App\{
     Models\Resources\Branch\Branch,
     Models\Resources\Company\Company,
     Models\User,
-    Traits\DbBeginTransac
+    Traits\DbBeginTransac,
+    Models\History\ActivityLog\ActivityLog,
 };
 
 use Illuminate\{
@@ -92,7 +93,7 @@ class EmployeeC extends Controller
                     ? $request->file('foto')->store('employee_foto', 'public')
                     : null;
 
-                Employee::create([
+                $employee = Employee::create([
                     'user_id'   => $user->id,
                     'name'      => $request->input('name'),
                     'telepon'   => $request->input('telepon'),
@@ -103,6 +104,11 @@ class EmployeeC extends Controller
                     'salary'    => $request->input('salary'),
                     'gender'    => $request->input('gender'),
                 ]);
+                
+                $employee->logActivity(
+                    ActivityLog::ACTION_CREATE,
+                    "Petugas {$employee->name} berhasil ditambahkan dengan email {$user->email}"
+                );
 
                 return response()->json([
                     'success' => true,
@@ -163,6 +169,11 @@ class EmployeeC extends Controller
                 ]));
 
                 $employee->save();
+                
+                $employee->logActivity(
+                    ActivityLog::ACTION_UPDATE,
+                    "Petugas {$employee->name} berhasil diperbarui"
+                );
                 return redirect('/people/employee')->with('success', 'Data user berhasil diperbarui.');
             });
         } catch (\Exception $e) {
@@ -182,7 +193,11 @@ class EmployeeC extends Controller
             if ($employee->foto && Storage::exists('public/' . $employee->foto)) {
                 Storage::delete('public/' . $employee->foto);
             }
-    
+            
+            $employee->logActivity(
+                    ActivityLog::ACTION_DELETE,
+                    "Petugas {$employee->name} dengan email {$user->email} telah dihapus"
+            );
             $employee->delete();
             $user->delete();
     

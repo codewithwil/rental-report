@@ -1,5 +1,5 @@
 @extends('admin.template.template')
-@section('title', 'Invoice Kategori')
+@section('title', 'Invoice Mingguan')
 
 @section('content')
 @push('css')
@@ -111,12 +111,12 @@
 <div class="app-content-header">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-6"><h3 class="mb-0">Invoice kategori</h3></div>
+            <div class="col-sm-6"><h3 class="mb-0">Invoice Mingguan</h3></div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
                     <li class="breadcrumb-item"><a href="{{url('/dashboard')}}">Dashboard</a></li>
-                    <li class="breadcrumb-item">Setting</li>
-                    <li class="breadcrumb-item active" aria-current="page">Kategori</li>
+                    <li class="breadcrumb-item">Laporan</li>
+                    <li class="breadcrumb-item active" aria-current="page">Laporan Mingguan</li>
                 </ol>
             </div>
         </div>
@@ -148,20 +148,55 @@
                                 </div>
                             </div>
 
-                            <table id="dataTableCategory" class="table table-striped" style="width:100%">
+                            <table id="dataTableWeeklyReport" class="table table-striped" style="width:100%">
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Nama Kategori</th>
-                                        <th>Tipe Kendaraan</th>
+                                        <th>Tanggal Laporan</th>
+                                        <th>Petugas</th>
+                                        <th>Kendaraan</th>
+                                        <th>Catatan</th>
+                                        <th>Status Laporan</th>
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($category as $cat)
+                                    @foreach ($weeklyReport as $week)
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $cat->name }}</td>
-                                        <td>{{ $cat->type_label }}</td>
+                                        <td data-label="No">{{ $loop->iteration  }}</td>
+                                        <td data-label="Tanggal Laporan">{{ $week->report_date  }}</td>
+                                        <td data-label="Petugas">{{ $week->user?->admin->name ?? $week->user?->supervisor?->name ?? $week->user?->employee?->name ?? 'No PIC' }}</td>
+                                        <td data-label="Kendaraan">{{ $week->vehicle->name  }}</td>
+                                        <td data-label="Catatan">{{ $week->note  }}</td>
+                                        <td data-label="Status Laporan">
+                                            {{ $week->status_label  }}
+                                            <i class="bi bi-question-circle-fill text-primary ms-2" 
+                                                data-bs-toggle="tooltip" 
+                                                data-bs-placement="top" 
+                                                title="{{($week->status_description) }}">
+                                            </i>
+                                        </td>
+                                        <td data-label="Aksi">
+                                            @if(auth()->user()->hasRole(['admin', 'supervisor', 'petugas']))
+                                                <a href="{{ url('/report/weeklyReport/edit/' . $week->weekReportId) }}" class="btn btn-primary">Edit</a>  
+                                                @if($week->status == \App\Models\Report\WeeklyReport\WeeklyReport::STATUS_PENDING)
+                                                    <a href="{{ url('report/weeklyReport/show/' . $week->weekReportId) }}" class="btn btn-warning">
+                                                        Validasi Laporan
+                                                    </a>
+                                                @elseif($week->status != \App\Models\Report\WeeklyReport\WeeklyReport::STATUS_PENDING)
+                                                    <a href="{{ url('report/weeklyReport/show/' . $week->weekReportId) }}" class="btn btn-info">
+                                                        Lihat Detail
+                                                    </a>
+                                                @endif
+                                                <form id="delete-form-{{ $week->weekReportId }}" action="{{ url('report/weeklyReport/delete', $week->weekReportId) }}" method="POST" style="display: inline;">
+                                                    @csrf
+                                                    @method('POST')
+                                                    <button type="button" class="btn btn-danger btn-delete" data-id="{{ $week->weekReportId }}">
+                                                        Hapus
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -181,7 +216,7 @@
     <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.2.1/js/dataTables.bootstrap5.js"></script>
     <script>
-        new DataTable('#dataTableCategory');
+        new DataTable('#dataTableWeeklyReport');
         
         function printInvoice() {
             var content = document.getElementById('printableArea').innerHTML;

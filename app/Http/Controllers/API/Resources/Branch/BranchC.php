@@ -7,7 +7,9 @@ use App\{
     Models\Resources\Branch\Branch,
     Models\Resources\Company\Company,
     Traits\DbBeginTransac,
+    Models\History\ActivityLog\ActivityLog
 };
+
 use Illuminate\{
     Http\Request,
     Support\Facades\DB,
@@ -126,7 +128,7 @@ class BranchC extends Controller
                 ], 422);
             }
             
-            Branch::create([
+            $branch = Branch::create([
                 'company_id'       => $req->input('company_id'),
                 'address'          => $req->input('address'),
                 'email'            => $req->input('email'),
@@ -135,6 +137,11 @@ class BranchC extends Controller
                 'ltd'              => $req->input('ltd'),
                 'lng'              => $req->input('lng'),
             ]);
+
+            $branch->logActivity(
+                ActivityLog::ACTION_CREATE,
+                "Cabang {$branch->name} berhasil ditambahkan"
+            );
 
             return redirect('/setting/branch/')->with('success', 'Cabang berhasil ditambahkan!');
         });
@@ -163,6 +170,10 @@ class BranchC extends Controller
             $branch->lng              = $req->lngEdit;
 
             $branch->save();
+            $branch->logActivity(
+                ActivityLog::ACTION_UPDATE,
+                "Cabang {$branch->name} berhasil diperbarui"
+            );
 
             return redirect('/setting/branch/')->with('success', 'Data cabang berhasil diperbarui.');
         });
@@ -176,6 +187,10 @@ class BranchC extends Controller
             $branch         = Branch::findOrFail($branchId);
             $branch->status = Branch::STATUS_INACTIVE;
             $branch->save();
+            $branch->logActivity(
+               ActivityLog::ACTION_DELETE,
+                "Cabang {$branch->name} telah dihapus"
+            );
             DB::commit();  
     
             $message = 'Data Cabang Berhasil Dihapus';  
