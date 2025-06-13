@@ -1,11 +1,6 @@
 @extends('admin.template.template')
 @section('title', 'Merek Kendaraaan')
-
 @section('content')
-@push('css')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.bootstrap5.css">
-@endpush
 
 <div class="app-content-header">
     <div class="container-fluid">
@@ -76,10 +71,6 @@
 
 
 @push('js')
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.2.1/js/dataTables.bootstrap5.js"></script>
     <script>
         new DataTable('#dataTableBrand');
         document.querySelector('#dataTableBrand tbody').addEventListener('click', function(event) {

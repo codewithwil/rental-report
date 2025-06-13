@@ -38,10 +38,15 @@ class AuthC extends Controller
         }
 
         if (Auth::attempt($credentials)) {
-            RateLimiter::clear($key); 
+            RateLimiter::clear($key);
             $req->session()->regenerate();
 
-            $user = Auth::user();
+            Auth::user()->update([
+                'last_login_ip'     => $req->ip(),
+                'last_login_device' => Str::limit($req->userAgent(), 255),
+                'last_active_at'    => now(),
+            ]);
+
             return redirect('dashboard')->with('success', 'Login berhasil');
         }
 

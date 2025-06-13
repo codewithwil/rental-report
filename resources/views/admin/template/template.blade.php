@@ -39,7 +39,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
     {{-- tom select  --}}
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
-
+    {{-- data table  --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.bootstrap5.css">
+    
     @stack('css')
     <style>
       .toast-success {
@@ -177,12 +180,6 @@
                   data: {
                       _token: '{{ csrf_token() }}'
                   },
-                  success: function() {
-                      console.log('Marked notification', notif.id, 'as read');
-                  },
-                  error: function(xhr) {
-                      console.error('Failed to mark as read:', xhr.responseText);
-                  }
               });
           });
       }).fail(function(xhr) {
@@ -196,8 +193,10 @@
     });
     </script>
 
+    {{-- data table  --}}
+    <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.2.1/js/dataTables.bootstrap5.js"></script>
     @stack('js')
     
   </body>
-  <!--end::Body-->
 </html>

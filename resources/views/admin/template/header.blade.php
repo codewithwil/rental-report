@@ -120,7 +120,7 @@
         <li class="nav-item dropdown">
             <a class="nav-link" data-bs-toggle="dropdown" href="#">
                 <i class="bi bi-bell-fill"></i>
-                <span class="navbar-badge badge text-bg-warning">
+                <span class="navbar-badge rounded-1 text-bg-warning">
                     {{ $notificationsGrouped->flatten()->count() }}
                 </span>
             </a>

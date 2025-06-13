@@ -1,21 +1,71 @@
 @extends('admin.template.template')
 @section('title', 'Users')
-
 @section('content')
 @push('css')
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.bootstrap5.css">
+<style>
+.vehicle-photo {
+    width: 100%;       
+    height: auto;
+    max-width: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+    table.responsive-table thead {
+        display: none;
+    }
+
+    table.responsive-table, 
+    table.responsive-table tbody, 
+    table.responsive-table tr, 
+    table.responsive-table td {
+        display: block;
+        width: 100%;
+    }
+
+    table.responsive-table tr {
+        margin-bottom: 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        padding: 0.5rem;
+        background-color: #f8f9fa;
+    }
+
+    table.responsive-table td {
+        text-align: left;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        position: relative;
+        font-size: 14px;
+    }
+
+    table.responsive-table td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .btn {
+        margin: 0.25rem 0;
+        font-size: 14px;
+        padding: 0.375rem 0.75rem;
+    }
+}
+</style>
+
 @endpush
 
 <div class="app-content-header">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-6"><h3 class="mb-0">Informasi User</h3></div>
+            <div class="col-sm-6"><h3 class="mb-0">Informasi Seluruh User</h3></div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                    <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{url('/dashboard')}}">Dashboard</a></li>
                     <li class="breadcrumb-item">Konfigurasi</li>
-                    <li class="breadcrumb-item active" aria-current="page">Users</li>
+                    <li class="breadcrumb-item active" aria-current="page">All Users</li>
                 </ol>
             </div>
         </div>
@@ -26,43 +76,46 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card mb-4">
-                    <div class="card-header"><h3 class="card-title">Users</h3></div>
+                    <div class="card-header"><h3 class="card-title">Users</h3></div>                    
                     <div class="card-body">
-                        <table id="dataTableUsers" class="table table-striped" style="width:100%">
+                        <table id="dataTableUsers" class="table table-striped responsive-table" style="width:100%">
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Nama</th>
                                     <th>Email</th>
-                                    <th>Level</th>
-                                    {{-- @if(auth()->user()->hasRole(['admin', 'supervisor']))
-                                    <th>Aksi</th>
-                                    @endif --}}
+                                    <th>Role</th>
+                                    <th>IP Terakhir login</th>
+                                    <th>Device Terakhir login</th>
+                                    <th>Terakhir Aktif</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($users as $us)
                                 <tr>
-                                    <td>{{ $loop->iteration  }}</td>
-                                    <td>{{ $us->name  }}</td>
-                                    <td>{{ $us->email }}</td>
-                                    <td>
-                                        @foreach ($us->roles as $role)
-                                            {{ $role->name }}
-                                        @endforeach
+                                    <td data-label="No">{{ $loop->iteration  }}</td>                                    
+                                    <td data-label="Email">{{ $us->email  }}</td>
+                                    <td data-label="Role">{{ $us->action_role }}</td>
+                                    <td data-label="Ip Terakhir Login">{{ $us->last_login_ip ?? 'belum login' }}</td>
+                                    <td data-label="Device Terakhir login">{{ $us->last_login_device ?? 'belum login' }}</td>
+                                    <td data-label="Terakhir Aktif">
+                                        {{ $us->last_active_at ? \Carbon\Carbon::parse($us->last_active_at)->diffForHumans() : 'belum pernah login' }}
                                     </td>
-                                    {{-- <td>
-                                        @if(auth()->user()->hasRole(['admin', 'supervisor']))
-                                        <a href="{{ url('/people/users/edit/' . $us->id) }}" class="btn btn-primary">Edit</a>        
-                                        @endif
-                                        @if(auth()->user()->hasRole(['admin']))                           
-                                        <form action="{{ url('people/users/delete', $us->id) }}" method="POST" style="display: inline;">
-                                            @csrf
-                                            @method('POST') 
-                                            <button type="submit" class="btn btn-danger text-light hover:text-red-700" onclick="return confirm('Are you sure?')">Hapus</button>
-                                        </form>
-                                        @endif
-                                    </td> --}}
+                                    <td data-label="Status">
+                                    @php
+                                        $lastActive = \Carbon\Carbon::parse($us->last_active_at);
+                                        $now = \Carbon\Carbon::now();
+                                        $diffMinutes = $lastActive->diffInMinutes($now);
+                                    @endphp
+
+                                    @if($us->last_active_at && $diffMinutes)
+                                        <span class="text-success">Online</span>
+                                    @else
+                                        <span class="text-muted">
+                                            Offline
+                                        </span>
+                                    @endif
+                                    </td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -75,10 +128,6 @@
 
 
 @push('js')
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.2.1/js/dataTables.bootstrap5.js"></script>
     <script>
         new DataTable('#dataTableUsers');
     </script>

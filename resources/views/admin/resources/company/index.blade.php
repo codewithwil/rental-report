@@ -1,10 +1,6 @@
 @extends('admin.template.template')
 @section('title', 'Company')
-
 @section('content')
-@push('css')
-<!-- Remove Select2 CSS link -->
-@endpush
 
 <div class="app-content-header">
     <div class="container-fluid">

@@ -17,9 +17,11 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('last_login_ip', 45)->nullable(); 
+            $table->string('last_login_device', 255)->nullable();
+            $table->timestamp('last_active_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
-
             $table->foreign('branch_id')
             ->references('branchId')
             ->on('branches')

@@ -42,7 +42,6 @@
               More info <i class="bi bi-link-45deg"></i>
             </a>
           </div>
-          <!--end::Small Box Widget 2-->
         </div>
 
         <div class="col-lg-4 col-6">
@@ -71,9 +70,7 @@
           </div>
         </div>
 
-        <!--end::Col-->
         <div class="col-lg-4 col-6">
-          <!--begin::Small Box Widget 3-->
           <div class="small-box text-bg-warning">
             <div class="inner">
               <h3>{{ $users }}</h3>
@@ -98,24 +95,22 @@
             </a>
           </div>
         </div>
-        <div class="row">
+      </div>
+      <div class="row">
             <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5>Grafik Laporan Mingguan</h5>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="statusChart"></canvas>
-                    </div>
+              <div class="card">
+                <div class="card-header">
+                    <h5>Grafik Laporan Mingguan</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="statusChart"></canvas>
                 </div>
             </div>
         </div>
-
       </div>
     </div>
   </div>
 
-  <!-- Modal Rules Perusahaan -->
   <div class="modal fade" id="rulesModal" tabindex="-1" aria-labelledby="rulesModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
