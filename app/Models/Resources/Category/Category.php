@@ -4,7 +4,8 @@ namespace App\Models\Resources\Category;
 
 use App\{
     Models\Resources\Vehicle\Vehicle,
-    Traits\ActivityLogs
+    Traits\ActivityLogs,
+    Traits\CacheableResource
 };
 
 use Illuminate\{
@@ -13,7 +14,7 @@ use Illuminate\{
 
 class Category extends Model
 {
-    use ActivityLogs;
+    use ActivityLogs, CacheableResource;
     const TYPE_CAR        = 1;
     const TYPE_MOTORCYCLE = 2;
     const STATUS_INACTIVE = 0;

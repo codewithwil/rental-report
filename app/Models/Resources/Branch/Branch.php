@@ -7,15 +7,15 @@ use App\{
     Models\Resources\Vehicle\Vehicle,
     Models\User,
     Traits\ActivityLogs,
+    Traits\CacheableResource,
 };
-
 use Illuminate\{
     Database\Eloquent\Model
 };
 
 class Branch extends Model
 {
-    use ActivityLogs;
+    use ActivityLogs, CacheableResource;
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE   = 1;
     protected $table      = 'branches';

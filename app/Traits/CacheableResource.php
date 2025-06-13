@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Cache;
 
 trait CacheableResource
 {
-     protected static string $cacheKey;
+ protected static string $cacheKey;
 
     protected static function bootCacheableResource()
     {
