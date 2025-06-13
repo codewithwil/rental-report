@@ -15,19 +15,17 @@ use Illuminate\{
     Support\Facades\DB,
     Support\Facades\Validator
 };
+use Illuminate\Support\Facades\Cache;
 
 class BranchC extends Controller
 {
     use DbBeginTransac;
+
     public function index()
     {
-        $branch = Branch::where('status', Branch::STATUS_ACTIVE)
-                        ->orderBy('created_at', 'asc')
-                        ->get();
-
+        $branch = Branch::getCachedActive();
         return view('admin.resources.branch.index', compact('branch'));
     }
-
 
     public function invoice(){
         $branch    = Branch::with('picUser')->where('status', Branch::STATUS_ACTIVE)->orderBy('created_at', 'asc')->get();
@@ -143,6 +141,8 @@ class BranchC extends Controller
                 "Cabang {$branch->name} berhasil ditambahkan"
             );
 
+            Cache::forget('branch_c');
+
             return redirect('/setting/branch/')->with('success', 'Cabang berhasil ditambahkan!');
         });
     }
@@ -175,6 +175,8 @@ class BranchC extends Controller
                 "Cabang {$branch->name} berhasil diperbarui"
             );
 
+            Cache::forget('branch_c');
+
             return redirect('/setting/branch/')->with('success', 'Data cabang berhasil diperbarui.');
         });
     }
@@ -194,6 +196,7 @@ class BranchC extends Controller
             DB::commit();  
     
             $message = 'Data Cabang Berhasil Dihapus';  
+            Cache::forget('branch_c');
             return redirect('/setting/branch/')
                 ->with('success', $message);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {

@@ -12,17 +12,17 @@ use App\{
 
 use Illuminate\{
     Http\Request,
-    Support\Facades\DB,
-    Support\Facades\Validator
+    Support\Facades\Validator,
+    Support\Facades\Cache
 };
 
 class BrandC extends Controller
 {
     use DbBeginTransac;
-      public function index(){
-        $brand = Brand::where('status', Brand::STATUS_ACTIVE)
-                            ->orderBy('created_at', 'asc')
-                            ->get();
+
+    public function index(){
+        $brand = Brand::getCachedActive();
+
         return view('admin.resources.brand.index', compact('brand'));
     }
 
@@ -61,6 +61,7 @@ class BrandC extends Controller
                 "Merk {$brand->name} berhasil ditambahkan"
             );
 
+            Cache::forget('brands_c');
             return response()->json([
                 'success' => true,
                 'message' => 'Data Merek Kendaraan berhasil ditambahkan!',
@@ -83,6 +84,8 @@ class BrandC extends Controller
                 ActivityLog::ACTION_UPDATE,
                 "Merk {$brand->name} berhasil diperbarui"
             );
+
+            Cache::forget('brands_c');
             return redirect('/setting/brand/')
                 ->with('success', 'Data Merek Kendaraan berhasil diperbarui.');
         });
@@ -99,6 +102,7 @@ class BrandC extends Controller
                ActivityLog::ACTION_DELETE,
                 "Merk {$brand->name} telah dihapus"
             );
+            Cache::forget('brands_c');
             return redirect('/setting/brand/')
                 ->with('success', 'Data Merek Kendaraan Berhasil Dihapus');
         } catch (\Exception $e) {

@@ -12,17 +12,15 @@ use App\{
 
 use Illuminate\{
     Http\Request,
-    Support\Facades\Validator
+    Support\Facades\Validator,
+    Support\Facades\Cache
 };
-
 
 class CategoryC extends Controller
 {
     use DbBeginTransac;
     public function index(){
-        $category = Category::where('status', Category::STATUS_ACTIVE)
-                            ->orderBy('created_at', 'asc')
-                            ->get();
+        $category = Category::getCachedActive();
         return view('admin.resources.category.index', compact('category'));
     }
 
@@ -63,6 +61,8 @@ class CategoryC extends Controller
                 "Kategori {$category->name} berhasil ditambahkan"
             );
 
+            Cache::forget('categories_c');
+
             return response()->json(['success' => true, 'message' => 'Data Kategori berhasil ditambahkan!']);
         });
     }
@@ -83,7 +83,7 @@ class CategoryC extends Controller
                 ActivityLog::ACTION_UPDATE,
                 "Kategori {$category->name} berhasil diperbarui"
             );
-            
+            Cache::forget('categories_c');
             return redirect('/setting/category/')
                 ->with('success', 'Data Kategori berhasil diperbarui.');
         });
@@ -102,6 +102,7 @@ class CategoryC extends Controller
                 "Kategori {$category->name} telah dihapus"
             );
 
+            Cache::forget('categories_c');
             return redirect('/setting/category/')
                 ->with('success', 'Data Kategori Berhasil Dihapus');
         } catch (\Exception $e) {

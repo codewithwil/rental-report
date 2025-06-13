@@ -24,7 +24,14 @@ class Category extends Model
         'name', 'status', 'type'
     ];
 
-    protected static function boot(){parent::boot();}
+    protected static string $cacheKey = 'categories_c';
+    protected static array $cacheColumns = ['categoryId', 'name', 'type'];
+
+    protected static function boot() {
+        parent::boot();
+        static::bootCacheableResource();
+    }
+
     public function vehicle(){return $this->hasMany(Vehicle::class, 'category_id', 'categoryId');}
     public function getTypeLabelAttribute()
     {

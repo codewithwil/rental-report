@@ -25,7 +25,16 @@ class Branch extends Model
         'phone', 'ltd', 'lng', 'status' 
     ];
 
-    protected static function boot(){parent::boot();}
+    protected static string $cacheKey = 'branch_c';
+    protected static array $cacheColumns = [
+        'branchId', 'company_id', 'address', 'email', 'operationalHours', 'phone', 'ltd', 'lng'
+    ];
+
+    protected static function boot() {
+        parent::boot();
+        static::bootCacheableResource();
+    }
+
     public function users(){return $this->hasMany(User::class, 'branch_id', 'branchId');}
     public function vehicle(){return $this->hasMany(Vehicle::class, 'brand_id', 'brandId');}
     public function company(){return $this->belongsTo(Company::class, 'company_id', 'companyId');}

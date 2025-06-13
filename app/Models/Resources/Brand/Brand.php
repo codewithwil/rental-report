@@ -22,6 +22,12 @@ class Brand extends Model
         'name', 'status',
     ];
 
-    protected static function boot(){parent::boot();}
+    protected static string $cacheKey = 'brands_c';
+    protected static array $cacheColumns = ['brandId', 'name'];
+
+    protected static function boot() {
+        parent::boot();
+        static::bootCacheableResource();
+    }
     public function vehicle(){return $this->hasMany(Vehicle::class, 'brand_id', 'brandId');}
 }
