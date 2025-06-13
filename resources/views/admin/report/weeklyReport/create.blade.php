@@ -314,6 +314,10 @@
                 instantUpload: false,
                 labelIdle: 'Drag & Drop your file or <span class="filepond--label-action">Browse</span>',
                 acceptedFileTypes: ['image/*', 'video/*'],
+                maxFileSize: '30MB',
+                fileValidateTypeDetectType: (source, type) => new Promise((resolve, reject) => {
+                    resolve(type);
+                })
             });
         });
     });

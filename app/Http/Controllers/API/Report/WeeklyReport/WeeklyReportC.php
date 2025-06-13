@@ -112,7 +112,7 @@ class WeeklyReportC extends Controller
                 'vehicle_id'  => $req->input('vehicle_id'),
                 'report_date' => $req->input('report_date'),
                 'note'        => $req->input('note'),
-            ]);
+            ]); 
 
           if ($req->has('details')) {
             foreach ($req->input('details') as $component => $positions) {
