@@ -6,8 +6,6 @@ use Illuminate\Support\Facades\Cache;
 
 trait CacheableResource
 {
- protected static string $cacheKey;
-
     protected static function bootCacheableResource()
     {
         static::saved(function () {
@@ -21,7 +19,7 @@ trait CacheableResource
 
     public static function getCacheKey(): string
     {
-        return static::$cacheKey;
+        return static::$cacheKey;  
     }
 
     public static function forgetCache()
