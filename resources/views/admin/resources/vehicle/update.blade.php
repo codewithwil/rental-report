@@ -138,17 +138,17 @@
 
                    <div class="col-md-3">
                         <label class="form-label">Dokumen KIR</label>
-                        <input type="file" name="kir_document" id="kir_document" class="filepond" accept="application/pdf">
+                        <input type="file" name="kir_document" id="kir_document" class="filepond" accept="application/pdf,image/*">
                     </div>
 
                     <div class="col-md-3">
                         <label class="form-label">Dokumen STNK</label>
-                        <input type="file" name="stnk_document" id="stnk_document" class="filepond" accept="application/pdf">
+                        <input type="file" name="stnk_document" id="stnk_document" class="filepond" accept="application/pdf,image/*">
                     </div>
 
                     <div class="col-md-3">
                         <label class="form-label">Dokumen BPKB</label>
-                        <input type="file" name="bpkb_document" id="bpkb_document" class="filepond" accept="application/pdf">
+                        <input type="file" name="bpkb_document" id="bpkb_document" class="filepond" accept="application/pdf,image/*">
                     </div>
 
                     <div class="col-md-6">
@@ -189,7 +189,7 @@
             server: null,
             allowMultiple: false,
             acceptedFileTypes: ['image/*', 'application/pdf'],
-            maxFileSize: '2MB',
+            maxFileSize: '20MB',
             instantUpload: false,
         });
     const photo = FilePond.create(document.querySelector('input[name="photo"]'), {
