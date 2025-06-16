@@ -23,11 +23,15 @@ class WeeklyReportC extends Controller
     use DbBeginTransac;
     public function index()
     {
-        $weeklyReport = WeeklyReport::with(['user', 'vehicle'])
-            ->where('status', '!=', WeeklyReport::STATUS_DELETED)
-            ->where('user_id', Auth::id())
-            ->orderBy('created_at', 'asc')
-            ->get();
+       $user = Auth::user();
+
+    $weeklyReport = WeeklyReport::with(['user', 'vehicle'])
+        ->where('status', '!=', WeeklyReport::STATUS_DELETED)
+        ->when(!$user->hasRole('admin'), function ($query) use ($user) {
+            return $query->where('user_id', $user->id);
+        })
+        ->orderBy('created_at', 'asc')
+        ->get();
 
         return view('admin.report.weeklyReport.index', compact('weeklyReport'));
     }
