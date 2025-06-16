@@ -86,7 +86,7 @@
             </li>
           </ul>
         </li>
-
+        @endif
         <li class="nav-header text-muted text-uppercase small mt-3">Setting</li>
         <li class="nav-item">
           <a href="#" class="nav-link">
@@ -97,13 +97,13 @@
             </p>
           </a>
           <ul class="nav nav-treeview ps-4">
+            @if(auth()->user()->hasRole(['admin']))
             <li class="nav-item">
               <a href="{{ url('setting/rules') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Peraturan Perusahaan</p>
               </a>
             </li>
-            @if(auth()->user()->hasRole(['admin']))
             <li class="nav-item">
               <a href="{{ url('setting/branch') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
@@ -111,6 +111,7 @@
               </a>
             </li>
             @endif
+            @if(auth()->user()->hasRole(['admin', 'supervisor']))
             <li class="nav-item">
               <a href="{{ url('setting/category') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
@@ -131,7 +132,7 @@
             </li>
           </ul>
         </li>
-        @endif
+        @endif  
 
         @if(auth()->user()->hasRole(['admin', 'supervisor']))
         <li class="nav-header text-muted text-uppercase small mt-3">Konfigurasi Aplikasi</li>
@@ -144,18 +145,21 @@
             </p>
           </a>
           <ul class="nav nav-treeview ps-4">
+            @if(auth()->user()->hasRole(['admin']))
             <li class="nav-item">
               <a href="{{ url('configuration/company') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Informasi Perusahaan</p>
               </a>
             </li>
+            @endif
             <li class="nav-item">
               <a href="{{ url('people/users') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Pengguna/User</p>
               </a>
             </li>
+            @if(auth()->user()->hasRole(['admin']))
             <li class="nav-item">
               <a href="{{ url('people/admin') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
@@ -168,6 +172,7 @@
                 <p>Manajemen Supervisor</p>
               </a>
             </li>
+            @endif
             <li class="nav-item">
               <a href="{{ url('people/employee') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>

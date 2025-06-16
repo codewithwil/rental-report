@@ -3,59 +3,58 @@
 
 @section('content')
 @push('css')
-<style>
-.vehicle-photo {
-    width: 100%;       
-    height: auto;
-    max-width: 150px;
-    object-fit: cover;
-    border-radius: 4px;
-}
+    <style>
+        .vehicle-photo {
+            width: 100%;       
+            height: auto;
+            max-width: 150px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
 
-@media (max-width: 768px) {
-    table.responsive-table thead {
-        display: none;
-    }
+        @media (max-width: 768px) {
+            table.responsive-table thead {
+                display: none;
+            }
 
-    table.responsive-table, 
-    table.responsive-table tbody, 
-    table.responsive-table tr, 
-    table.responsive-table td {
-        display: block;
-        width: 100%;
-    }
+            table.responsive-table, 
+            table.responsive-table tbody, 
+            table.responsive-table tr, 
+            table.responsive-table td {
+                display: block;
+                width: 100%;
+            }
 
-    table.responsive-table tr {
-        margin-bottom: 1rem;
-        border: 1px solid #dee2e6;
-        border-radius: 5px;
-        padding: 0.5rem;
-        background-color: #f8f9fa;
-    }
+            table.responsive-table tr {
+                margin-bottom: 1rem;
+                border: 1px solid #dee2e6;
+                border-radius: 5px;
+                padding: 0.5rem;
+                background-color: #f8f9fa;
+            }
 
-    table.responsive-table td {
-        text-align: left;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        position: relative;
-        font-size: 14px;
-    }
+            table.responsive-table td {
+                text-align: left;
+                padding-left: 1rem;
+                padding-right: 1rem;
+                position: relative;
+                font-size: 14px;
+            }
 
-    table.responsive-table td::before {
-        content: attr(data-label);
-        font-weight: bold;
-        display: block;
-        margin-bottom: 0.25rem;
-    }
+            table.responsive-table td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                display: block;
+                margin-bottom: 0.25rem;
+            }
 
-    .btn {
-        margin: 0.25rem 0;
-        font-size: 14px;
-        padding: 0.375rem 0.75rem;
-    }
-}
-</style>
-
+            .btn {
+                margin: 0.25rem 0;
+                font-size: 14px;
+                padding: 0.375rem 0.75rem;
+            }
+        }
+    </style>
 @endpush
 
 <div class="app-content-header">
