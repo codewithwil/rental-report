@@ -60,7 +60,7 @@
                                     </option>
                                 @else
                                     @foreach ($branch as $b)
-                                        <option value="{{ $b->branchId }}">{{ $b->email }}</option>
+                                        <option value="{{ $b->branchId }}">{{ \Illuminate\Support\Str::replace('@branch.com', '', $b->email) }}</option>
                                     @endforeach
                             @endif
                         </select>

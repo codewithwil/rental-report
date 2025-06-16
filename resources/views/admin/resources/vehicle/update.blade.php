@@ -56,7 +56,7 @@
                             <option value="">-- Pilih Cabang --</option>
                             @foreach($branch as $item)
                                 <option value="{{ $item->branchId }}" {{ $vehicle->branch_id == $item->branchId ? 'selected' : '' }}>
-                                    {{ $item->email }}
+                                    {{ \Illuminate\Support\Str::replace('@branch.com', '', $item->email) }}
                                 </option>
                             @endforeach
                         </select>

@@ -83,7 +83,6 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Email</th>
-                                    <th>Role</th>
                                     <th>IP Terakhir login</th>
                                     <th>Device Terakhir login</th>
                                     <th>Terakhir Aktif</th>
@@ -95,7 +94,6 @@
                                 <tr>
                                     <td data-label="No">{{ $loop->iteration  }}</td>                                    
                                     <td data-label="Email">{{ $us->email  }}</td>
-                                    <td data-label="Role">{{ $us->action_role }}</td>
                                     <td data-label="Ip Terakhir Login">{{ $us->last_login_ip ?? 'belum login' }}</td>
                                     <td data-label="Device Terakhir login">{{ $us->last_login_device ?? 'belum login' }}</td>
                                     <td data-label="Terakhir Aktif">
