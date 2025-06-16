@@ -52,4 +52,7 @@ class Vehicle extends Model
     }
 
     protected static function booted(){static::addGlobalScope(new UserBranchScope);}
+
+
+
 }

@@ -87,6 +87,7 @@
           </ul>
         </li>
         @endif
+        @if(auth()->user()->hasRole(['admin', 'supervisor']))
         <li class="nav-header text-muted text-uppercase small mt-3">Setting</li>
         <li class="nav-item">
           <a href="#" class="nav-link">
@@ -97,7 +98,6 @@
             </p>
           </a>
           <ul class="nav nav-treeview ps-4">
-            @if(auth()->user()->hasRole(['admin']))
             <li class="nav-item">
               <a href="{{ url('setting/rules') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
@@ -110,8 +110,6 @@
                 <p>Cabang</p>
               </a>
             </li>
-            @endif
-            @if(auth()->user()->hasRole(['admin', 'supervisor']))
             <li class="nav-item">
               <a href="{{ url('setting/category') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>

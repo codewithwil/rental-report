@@ -166,7 +166,7 @@
 
         function tambahUser() {
             let email    = document.getElementById('email').value.trim();
-            let role = document.getElementById('role').value.trim();
+            let role     = document.getElementById('role').value.trim();
             let password = document.getElementById('password').value.trim();
             let name     = document.getElementById('name').value.trim();
             let telepon  = document.getElementById('telepon').value.trim();
@@ -178,10 +178,10 @@
             let gender  = document.getElementById('gender').value.trim();
             let branch_id  = document.getElementById('branch_id').value.trim();
 
-            if (email === '' || role === '' || password === '' || name === '' || telepon === '' || !foto || address === '' || birthdate === ''
+            if (email === '' || role === '' || password === '' || name === '' || telepon === '' || address === '' || birthdate === ''
                 || hire_date === '' || salary === '' || gender === '' || branch_id === ''
             ) {
-                alert("Semua data wajib diisi, termasuk foto!");
+                alert("Semua data wajib diisi, kecuali foto!");
                 return;
             }
 
