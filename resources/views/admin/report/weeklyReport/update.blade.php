@@ -193,7 +193,7 @@
                                                 <option value="">-- Pilih Kendaraan --</option>
                                                 @foreach($vehicle as $item)
                                                     <option value="{{ $item->vehicleId }}" {{ $weeklyReport->vehicle_id == $item->vehicleId ? 'selected' : '' }}>
-                                                        {{ $item->name }} - {{ $item->plate_number }}
+                                                        {{ $item->name }} - {{ $item->plate_number }}, {{ \Illuminate\Support\Str::replace('@branch.com', '', $item->branch->email) }}
                                                     </option>
                                                 @endforeach
                                             </select>

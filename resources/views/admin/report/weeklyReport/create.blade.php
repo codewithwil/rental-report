@@ -190,11 +190,11 @@
                                             <label class="form-label">Kendaraan</label>
                                             <select id="VehicleSelect" name="vehicle_id" class="form-control" placeholder="Pilih Kendaraan" autocomplete="off">
                                                 <option value="">-- Pilih Kendaraan --</option>
-                                              @foreach($vehicle as $item)
-    <option value="{{ $item->vehicleId }}">
-        {{ $item->name }} - {{ $item->plate_number }}, {{ \Illuminate\Support\Str::replace('@branch.com', '', $item->branch->email) }}
-    </option>
-@endforeach
+                                                @foreach($vehicle as $item)
+                                                    <option value="{{ $item->vehicleId }}">
+                                                        {{ $item->name }} - {{ $item->plate_number }}, {{ \Illuminate\Support\Str::replace('@branch.com', '', $item->branch->email) }}
+                                                    </option>
+                                                @endforeach
 
                                             </select>
                                         </div>
