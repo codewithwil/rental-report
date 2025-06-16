@@ -51,7 +51,7 @@ class Vehicle extends Model
         return $labels[$this->status] ?? 'Tidak Diketahui';
     }
 
-    protected static function booted(){static::addGlobalScope(new UserBranchScope);}
+    // protected static function booted(){static::addGlobalScope(new UserBranchScope);}
 
 
 
