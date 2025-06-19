@@ -28,10 +28,18 @@ class EmployeeC extends Controller
 
     public function index()
     {
-        $users = Employee::with(['user.branch'])->get();
+        $users = Employee::select('employeeId', 'user_id', 'foto', 'name', 'telepon', 'address', 'gender')
+                            ->with([
+                                'user' => function ($query) {
+                                    $query->select('id', 'email', 'branch_id') 
+                                        ->with('branch:branchId,address');  
+                                }
+                            ])
+                            ->get();
 
         return view('admin.people.employee.index', compact('users'));
     }
+
     
     public function create(){
         $roles    = Role::all(); 
@@ -40,7 +48,14 @@ class EmployeeC extends Controller
     }
 
     public function invoice(){
-        $users   = Employee::all();
+        $users   = Employee::select('employeeId', 'user_id', 'foto', 'name', 'telepon', 'address', 'gender')
+                            ->with([
+                                'user' => function ($query) {
+                                    $query->select('id', 'email', 'branch_id') 
+                                        ->with('branch:branchId,address');  
+                                }
+                            ])
+                            ->get();
         $company = Company::first();
         return view('admin.people.employee.invoice', compact('users', 'company'));
     }

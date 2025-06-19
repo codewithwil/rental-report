@@ -27,13 +27,16 @@ trait CacheableResource
         Cache::forget(static::getCacheKey());
     }
 
-    public static function getCachedActive($ttl = 86400) 
+    public static function getCachedActive($ttl = 86400, $selectColumns = null)
     {
-        return Cache::remember(static::getCacheKey(), $ttl, function () {
-            return static::select(static::$cacheColumns)
+        return Cache::remember(static::getCacheKey(), $ttl, function () use ($selectColumns) {
+            $columns = $selectColumns ?? static::$cacheColumns;
+
+            return static::select($columns)
                 ->where('status', static::STATUS_ACTIVE)
                 ->orderBy('created_at', 'asc')
                 ->get();
         });
     }
+
 }

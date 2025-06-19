@@ -1,6 +1,5 @@
 @extends('admin.template.template')
 @section('title', 'Laporan Mingguan')
-
 @section('content')
 @push('css')
 <style>
@@ -96,7 +95,7 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Tanggal Laporan</th>
-                                    <th>Petugas</th>
+                                    <th>Dilaporkan Oleh</th>
                                     <th>Kendaraan</th>
                                     <th>Catatan</th>
                                     <th>Status Laporan</th>
@@ -108,8 +107,8 @@
                                 <tr>
                                     <td data-label="No">{{ $loop->iteration  }}</td>
                                     <td data-label="Tanggal Laporan">{{ $week->report_date  }}</td>
-                                    <td data-label="Petugas">{{ $week->user?->admin->name ?? $week->user?->supervisor?->name ?? $week->user?->employee?->name ?? 'No PIC' }}</td>
-                                    <td data-label="Kendaraan">{{ $week->vehicle->name  }}</td>
+                                    <td data-label="Dilaporkan Oleh">{{ $week->user?->admin->name ?? $week->user?->supervisor?->name ?? $week->user?->employee?->name ?? 'No PIC' }}</td>
+                                    <td data-label="Kendaraan">{{ $week->vehicle->name  }} {{$week->vehicle->plate_number}}</td>
                                     <td data-label="Catatan">{{ $week->note  }}</td>
                                     <td data-label="Status Laporan">
                                         {{ $week->status_label  }}

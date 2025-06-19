@@ -11,7 +11,7 @@ use App\{
     Models\Scopes\UserBranchScope,
     Traits\ActivityLogs
 };
-
+use App\Models\Report\VehicleRepair\VehicleRepair;
 use Illuminate\{
     Database\Eloquent\Model
 };
@@ -39,6 +39,7 @@ class Vehicle extends Model
     public function Brand(){return $this->belongsTo(Brand::class, 'brand_id', 'brandId');}
     public function weeklyReport(){return $this->hasOne(WeeklyReport::class, 'vehicle_id', 'vehicleId');}
     public function vehicleDocument(){return $this->hasOne(VehicleDocument::class, 'vehicle_id', 'vehicleId');}
+    public function vehicleRepair(){return $this->hasMany(VehicleRepair::class, 'vehicle_id', 'vehicleId');}
     public function getStatusLabelAttribute()
     {
         $labels = [

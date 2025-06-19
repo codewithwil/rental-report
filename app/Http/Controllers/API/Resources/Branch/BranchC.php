@@ -23,12 +23,16 @@ class BranchC extends Controller
 
     public function index()
     {
-        $branch = Branch::getCachedActive();
+        $branch = Branch::getCachedActive(86400, [
+            'branchId', 'address', 'email', 'operationalHours', 'phone', 'status'
+        ]);
         return view('admin.resources.branch.index', compact('branch'));
     }
 
     public function invoice(){
-        $branch    = Branch::with('picUser')->where('status', Branch::STATUS_ACTIVE)->orderBy('created_at', 'asc')->get();
+        $branch = Branch::getCachedActive(86400, [
+            'branchId', 'address', 'email', 'operationalHours', 'phone',
+        ]);
         $company = Company::first();
         return view('admin.resources.branch.invoice', compact('branch', 'company'));
     }

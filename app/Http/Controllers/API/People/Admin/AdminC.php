@@ -25,11 +25,17 @@ class AdminC extends Controller
 
     public function index()
     {
-        $users = Admin::with('user.branch')->get();
+        $users = Admin::select('adminId', 'user_id', 'foto', 'name', 'telepon') 
+            ->with([
+                'user' => function ($q) {
+                    $q->select('id', 'email', 'branch_id') 
+                    ->with('branch:branchId,address');   
+                }
+            ])
+            ->get();
 
         return view('admin.people.admin.index', compact('users'));
     }
-    
 
     public function create(){
         $roles    = Role::all(); 
@@ -37,7 +43,14 @@ class AdminC extends Controller
     }
 
     public function invoice(){
-        $users   = Admin::all();
+        $users   = Admin::select('adminId', 'user_id', 'foto', 'name', 'telepon') 
+                        ->with([
+                            'user' => function ($q) {
+                                $q->select('id', 'email', 'branch_id') 
+                                ->with('branch:branchId,address');   
+                            }
+                        ])
+                        ->get();
         $company = Company::first();
         return view('admin.people.admin.invoice', compact('users', 'company'));
     }

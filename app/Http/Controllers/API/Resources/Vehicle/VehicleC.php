@@ -26,7 +26,14 @@ class VehicleC extends Controller
     use DbBeginTransac, AsignFile;
     public function index()
     {
-        $vehicle = Vehicle::with(['user.branch'])
+        $vehicle = Vehicle::select([
+                'vehicleId', 'user_id', 'branch_id', 'brand_id', 'name',
+                'plate_number', 'color', 'year', 'photo', 'status'
+            ])
+            ->with([
+                'user:id,branch_id', 
+                'user.branch:branchId,email'
+            ])
             ->where('status', '!=', Vehicle::STATUS_DELETED)
             ->orderBy('created_at', 'asc')
             ->get();
@@ -36,7 +43,17 @@ class VehicleC extends Controller
 
 
     public function invoice(){
-        $vehicle = Vehicle::orderBy('created_at', 'asc')->get();
+        $vehicle = Vehicle::select([
+                'vehicleId', 'user_id', 'branch_id', 'brand_id', 'name',
+                'plate_number', 'color', 'year', 'photo', 'status'
+            ])
+            ->with([
+                'user:id,branch_id', 
+                'user.branch:branchId,email'
+            ])
+            ->where('status', '!=', Vehicle::STATUS_DELETED)
+            ->orderBy('created_at', 'asc')
+            ->get();
         $company = Company::first();
         return view('admin.resources.vehicle.invoice', compact('vehicle', 'company'));
     }

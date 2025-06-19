@@ -28,7 +28,15 @@ class SupervisorC extends Controller
 
     public function index()
     {
-        $users = Supervisor::with(['user.branch'])->get();
+        $users = Supervisor::select('supervisorId', 'user_id', 'foto', 'name', 'telepon')
+            ->with([
+                'user' => function ($query) {
+                    $query->select('id', 'email', 'branch_id')
+                        ->with('branch:branchId,address'); 
+                }
+            ])
+            ->get();
+
         return view('admin.people.supervisor.index', compact('users'));
     }
     

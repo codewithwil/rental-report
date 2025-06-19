@@ -96,7 +96,7 @@
                                 @foreach ($activities as $a)
                                 <tr>
                                     <td data-label="No">{{ $loop->iteration  }}</td>
-                                    <td data-label="Waktu Aktivitas">{{ $a->created_at->format('Y-m-d') }}</td>
+                                    <td data-label="Waktu Aktivitas" class="text-start">{{ $a->created_at->format('Y-m-d') }}</td>
                                     <td data-label="Oleh">{{ $a->user?->admin->name ?? $a->user?->supervisor?->name ?? $a->user?->employee?->name ?? 'No PIC' }}</td>
                                     <td data-label="Aksi">{{ $a->action_label  }}</td>
                                     <td data-label="Deskripsi">{{ $a->description  }}</td>

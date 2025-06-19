@@ -94,7 +94,7 @@
                                 @foreach ($notification as $not)
                                 <tr>
                                     <td data-label="No">{{ $loop->iteration  }}</td>
-                                    <td data-label="Tanggal">{{ $not->created_at->format('Y-m-d') }}</td>
+                                    <td data-label="Tanggal" class="text-start">{{ $not->created_at->format('Y-m-d') }}</td>
                                     <td data-label="Ditujukan Untuk">{{ $not->user?->admin->name ?? $not->user?->supervisor?->name ?? $not->user?->employee?->name ?? 'No PIC' }}</td>
                                     <td data-label="Judul Notifikasi">{{ $not->title  }}</td>
                                     <td data-label="Pesan">{{ $not->message  }}</td>

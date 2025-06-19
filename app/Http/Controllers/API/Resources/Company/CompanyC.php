@@ -4,16 +4,21 @@ namespace App\Http\Controllers\API\Resources\Company;
 
 use App\{
     Http\Controllers\Controller,
+    Models\History\ActivityLog\ActivityLog,
+    Models\Resources\Company\Company
 };
-use App\Models\History\ActivityLog\ActivityLog;
-use App\Models\Resources\Company\Company;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+
+use Illuminate\{
+    Http\Request,
+    Support\Facades\DB
+};
+
 class CompanyC extends Controller
 {
 
-    public function index(){
-        $company = Company::first();
+    public function index()
+    {
+        $company = Company::select('companyId', 'image', 'name', 'web')->first();
         return view('admin.resources.company.index', compact('company'));
     }
 

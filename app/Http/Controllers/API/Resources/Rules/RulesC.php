@@ -19,12 +19,12 @@ class RulesC extends Controller
 {
     use DbBeginTransac;
     public function index(){
-        $rules = Rules::orderBy('created_at', 'asc')->get();
+        $rules = Rules::select('rulesId', 'content')->orderBy('created_at', 'asc')->get();
         return view('admin.resources.rules.index', compact('rules'));
     }
 
     public function invoice(){
-        $rules = Rules::orderBy('created_at', 'asc')->get();
+        $rules = Rules::select('rulesId', 'content')->orderBy('created_at', 'asc')->get();
         $company  = Company::first();
         return view('admin.resources.rules.invoice', compact('rules', 'company'));
     }

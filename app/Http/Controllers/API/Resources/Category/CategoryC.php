@@ -20,12 +20,12 @@ class CategoryC extends Controller
 {
     use DbBeginTransac;
     public function index(){
-        $category = Category::getCachedActive();
+        $category = Category::getCachedActive(86400, ['categoryId', 'name', 'type', 'status']);
         return view('admin.resources.category.index', compact('category'));
     }
 
     public function invoice(){
-        $category = Category::where('status', Category::STATUS_ACTIVE)->orderBy('created_at', 'asc')->get();
+        $category = Category::getCachedActive(86400, ['categoryId', 'name', 'type', 'status']);
         $company  = Company::first();
         return view('admin.resources.category.invoice', compact('category', 'company'));
     }

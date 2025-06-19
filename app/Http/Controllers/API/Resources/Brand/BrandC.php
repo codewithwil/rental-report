@@ -20,8 +20,9 @@ class BrandC extends Controller
 {
     use DbBeginTransac;
 
-    public function index(){
-        $brand = Brand::getCachedActive();
+    public function index()
+    {
+        $brand = Brand::getCachedActive(86400, ['brandId', 'name', 'status']);
 
         return view('admin.resources.brand.index', compact('brand'));
     }

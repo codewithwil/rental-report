@@ -50,6 +50,7 @@ use HasFactory, Notifiable, HasRoles;
     public function weeklyReport(){return $this->hasOne(WeeklyReport::class, 'user_id');}
     public function notification(){return $this->hasOne(Notification::class, 'user_id');}
     public function vehicle(){return $this->hasOne(Vehicle::class, 'user_id');}
+    public function vehicleRepair(){return $this->hasMany(Vehicle::class, 'user_id');}
     public function realName()
     {
         if ($this->hasRole('admin') && $this->admin) {

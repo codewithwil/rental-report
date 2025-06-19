@@ -1,8 +1,10 @@
 @extends('admin.template.template')
-@section('title', 'Invoice Kendaraan')
+@section('title', 'Invoice Merek Kendaraan')
 
 @section('content')
 @push('css')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.bootstrap5.css">
 <style>
     .invoice-image {
         max-width: 100px;
@@ -109,12 +111,12 @@
 <div class="app-content-header">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-6"><h3 class="mb-0">Invoice Kendaraan</h3></div>
+            <div class="col-sm-6"><h3 class="mb-0">Invoice kategori</h3></div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                    <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{url('/dashboard')}}">Dashboard</a></li>
                     <li class="breadcrumb-item">Setting</li>
-                    <li class="breadcrumb-item active" aria-current="page">Kendaraan</li>
+                    <li class="breadcrumb-item active" aria-current="page">Merek Kendaraan</li>
                 </ol>
             </div>
         </div>
@@ -123,6 +125,7 @@
 
 <div class="app-content">
     <div class="container-fluid">
+        <!-- Invoice Section -->
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card">
@@ -145,37 +148,19 @@
                                 </div>
                             </div>
 
-                            <table id="dataTableVehicle" class="table table-striped" style="width:100%">
-                                 <thead>
+                            <table id="dataTableBrand" class="table table-striped" style="width:100%">
+                                <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>Foto Kendaraan</th>
-                                        <th>Nama Kendaraan</th>
-                                        <th>Merk</th>
-                                        <th>Plat Nomer</th>
-                                        <th>Warna</th>
-                                        <th>Tahun</th>
-                                        <th>Cabang</th>
+                                        <th>Nama Merk Kendaraan</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($vehicle as $v)
-                                        <tr>
-                                            <td data-label="No">{{ $loop->iteration }}</td>
-                                            <td data-label="Foto Kendaraan">
-                                                @if($v->photo)
-                                                    <img src="{{ asset('storage/'.$v->photo) }}" alt="Foto Kendaraan" class="img-fluid invoice-image">
-                                                @else
-                                                    -
-                                                @endif
-                                            </td>
-                                            <td data-label="Nama Kendaraan">{{ $v->name }}</td>
-                                            <td data-label="Merk">{{ $v->brand?->name ?? '-' }}</td>
-                                            <td data-label="Plat Nomer">{{ $v->plate_number }}</td>
-                                            <td data-label="Warna">{{ $v->color }}</td>
-                                            <td data-label="Tahun" class="text-start">{{ $v->year }}</td>
-                                            <td data-label="Cabang">{{ $v->branch?->email ?? '-' }}</td>
-                                        </tr>
+                                    @foreach ($brand as $b)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $b->name }}</td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -189,8 +174,12 @@
 </div>
 
 @push('js')
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.2.1/js/dataTables.bootstrap5.js"></script>
     <script>
-        new DataTable('#dataTableVehicle');
+        new DataTable('#dataTableBrand');
         
         function printInvoice() {
             var content = document.getElementById('printableArea').innerHTML;
