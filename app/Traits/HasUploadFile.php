@@ -60,40 +60,55 @@ public function uploadMultipleFiles(array $files, string $relationName = 'photo'
     }
 }
 
-    public function uploadBase64Files(array $files, string $relationName = 'photo', string $path = 'uploads', string $disk = 'public')
+    public function uploadBase64File(array $file, string $relationName = 'photo', string $path = 'uploads', string $disk = 'public')
     {
-        foreach ($files as $file) {
-            if (!isset($file['base64']) || !isset($file['type'])) {
-                Log::warning('Invalid file data', ['file' => $file]);
-                continue;
-            }
-
-            $base64Str = preg_replace('/^data:\w+\/\w+;base64,/', '', $file['base64']);
-            $base64Str = str_replace(' ', '+', $base64Str);
-            $decoded = base64_decode($base64Str);
-
-            if ($decoded === false) {
-                Log::error('Gagal decode base64', ['base64' => substr($base64Str, 0, 30)]);
-                continue;
-            }
-
-            $extension = explode('/', $file['type'])[1] ?? 'jpg';
-            $filename = uniqid('file_') . '.' . $extension;
-            $storedPath = $path . '/' . $filename;
-
-            Storage::disk($disk)->put($storedPath, $decoded);
-
-            $this->$relationName()->create([
-                'path'          => $storedPath,
-                'original_name' => $file['name'] ?? $filename,
-                'size'          => $file['size'] ?? strlen($decoded),
-                'mime_type'     => $file['type'],
-            ]);
-
-            Log::info('File base64 disimpan', [
-                'stored_path' => $storedPath,
-                'fileable_id' => $this->getKey(),
-            ]);
+        if (!isset($file['base64']) || !isset($file['type'])) {
+            Log::warning('Invalid file data', ['file' => $file]);
+            return;
         }
+
+        if ($this->$relationName) {
+            try {
+                Storage::disk($disk)->delete($this->$relationName->path);
+                $this->$relationName->delete();
+                Log::info('Foto lama berhasil dihapus', [
+                    'path' => $this->$relationName->path,
+                    'fileable_id' => $this->getKey(),
+                ]);
+            } catch (\Throwable $e) {
+                Log::error('Gagal menghapus foto lama', [
+                    'fileable_id' => $this->getKey(),
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        $base64Str = preg_replace('/^data:\w+\/\w+;base64,/', '', $file['base64']);
+        $base64Str = str_replace(' ', '+', $base64Str);
+        $decoded = base64_decode($base64Str);
+
+        if ($decoded === false) {
+            Log::error('Gagal decode base64', ['base64' => substr($base64Str, 0, 30)]);
+            return;
+        }
+
+        $extension = explode('/', $file['type'])[1] ?? 'jpg';
+        $filename = uniqid('file_') . '.' . $extension;
+        $storedPath = $path . '/' . $filename;
+
+        Storage::disk($disk)->put($storedPath, $decoded);
+
+        $this->$relationName()->create([
+            'path'          => $storedPath,
+            'original_name' => $file['name'] ?? $filename,
+            'size'          => $file['size'] ?? strlen($decoded),
+            'mime_type'     => $file['type'],
+        ]);
+
+        Log::info('File base64 disimpan', [
+            'stored_path' => $storedPath,
+            'fileable_id' => $this->getKey(),
+        ]);
     }
+
 }

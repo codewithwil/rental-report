@@ -65,7 +65,7 @@
                                             @foreach ($branch as $b)
                                                 <option value="{{ $b->branchId }}" 
                                                     {{ $users->user && $b->branchId == $users->user->branch_id ? 'selected' : '' }}>
-                                                    {{ $b->email }}
+                                                    {{ \Illuminate\Support\Str::replace('@branch.com', '', $b->email) }}
                                                 </option>
                                             @endforeach
                                         @endif

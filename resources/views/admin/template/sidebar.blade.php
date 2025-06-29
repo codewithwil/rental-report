@@ -60,9 +60,30 @@
             {{-- <li class="nav-item">
               <a href="{{ url('report/vehicleRepair') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
-                <p>Pengajuan</p>
+                <p>Ajukan Perbaikan</p>
               </a>
             </li> --}}
+          </ul>
+        </li>
+        @endif
+
+        @if(auth()->user()->hasRole(['admin', 'supervisor']))
+        <li class="nav-header text-muted text-uppercase small mt-3">Transaksi</li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="nav-icon bi bi-currency-dollar"></i>
+            <p>
+              Transaksi
+              <i class="nav-arrow bi bi-chevron-right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview ps-4">
+            <li class="nav-item">
+              <a href="{{ url('report/weeklyReport') }}" class="nav-link">
+                <i class="nav-icon bi bi-circle"></i>
+                <p>Perbaikan Kendaraan</p>
+              </a>
+            </li>
           </ul>
         </li>
         @endif

@@ -161,6 +161,12 @@
                             <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal">Tolak</button>
                         @endif
                     @endif
+                    <a href="{{ url('report/weeklyReport/pdf/' . $weeklyReport->weekReportId) }}" 
+                    target="_blank" 
+                    class="btn btn-secondary">
+                        Print Invoice
+                    </a>
+
                 </div>  
             </div>
         </div>

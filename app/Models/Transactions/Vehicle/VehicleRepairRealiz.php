@@ -3,7 +3,10 @@
 namespace App\Models\Transactions\Vehicle;
 
 use App\{
-    Models\Transactions\Payment\PaymentAmount
+    Models\Transactions\Payment\PaymentAmount,
+    Models\Files\Files,
+    Traits\ActivityLogs,
+    Traits\HasUploadFile
 };
 
 use Illuminate\{
@@ -12,6 +15,7 @@ use Illuminate\{
 
 class VehicleRepairRealiz extends Model
 {
+    use HasUploadFile, ActivityLogs;
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE   = 1;
     protected $table      = 'vehicle_repair_realizs';
@@ -24,5 +28,7 @@ class VehicleRepairRealiz extends Model
     {
         return $this->morphMany(PaymentAmount::class, 'payable', 'payable_type', 'payable_id', 'vehcileRepairRealId');
     }
+
+    public function photo(){return $this->morphMany(Files::class, 'fileable');}
 
 }

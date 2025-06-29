@@ -7,23 +7,22 @@ use App\{
     Models\History\ActivityLog\ActivityLog,
     Models\Report\VehicleRepair\VehicleRepair,
     Models\Resources\Company\Company,
-    Traits\DbBeginTransac
+    Traits\DbBeginTransac,
+    Models\Notification\Notification,
+    Models\Resources\Vehicle\Vehicle
 };
-use App\Models\Notification\Notification;
-use App\Models\Resources\Vehicle\Vehicle;
-use App\Models\User;
-use App\Traits\HasUploadFile;
+
 use Illuminate\{
     Http\Request,
-    Support\Facades\Validator
+    Support\Facades\Validator,
+    Support\Facades\Auth,
+    Support\Facades\Log,
+    Support\Facades\Storage
 };
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class VehicleRepairC extends Controller
 {
-      use DbBeginTransac;
+    use DbBeginTransac;
 
     public function index()
     {
@@ -33,8 +32,8 @@ class VehicleRepairC extends Controller
     }
 
     public function invoice(){
-       $vehicleRepair = VehicleRepair::with(['vehicle.branch', 'user', 'photo'])->findOrFail($id);
-        $company = Company::first();
+        $vehicleRepair = VehicleRepair::get();
+        $company       = Company::first();
         return view('admin.report.vehicleRepair.invoice', compact('vehicleRepair', 'company'));
     }
 
@@ -153,11 +152,6 @@ class VehicleRepairC extends Controller
 
     public function update(Request $req, $vehicleRepId)
     {
-        Log::info('Mulai proses update vehicle repair', [
-            'vehicleRepId' => $vehicleRepId,
-            'request' => $req->all(),
-        ]);
-
         $decodedPhotos = collect($req->input('photos', []))
             ->map(function ($photo) {
                 if (is_string($photo)) {
@@ -192,7 +186,6 @@ class VehicleRepairC extends Controller
             ]);
 
             if ($validator->fails()) {
-                Log::error('Validasi gagal', ['errors' => $validator->errors()]);
                 return back()->withErrors($validator)->withInput();
             }
 
@@ -213,7 +206,6 @@ class VehicleRepairC extends Controller
                 try {
                     Storage::disk('public')->delete($photo->path);
                     $photo->delete();
-                    Log::info('Foto dihapus', ['photo_id' => $photo->id]);
                 } catch (\Throwable $e) {
                     Log::error('Gagal menghapus foto', [
                         'photo_id' => $photo->id,
@@ -225,7 +217,6 @@ class VehicleRepairC extends Controller
             if (!empty($decodedPhotos)) {
                 try {
                     $vehicleRepair->uploadBase64Files($decodedPhotos, 'photo', 'vehicle_repair');
-                    Log::info('Upload foto baru selesai', ['jumlah' => count($decodedPhotos)]);
                 } catch (\Throwable $e) {
                     Log::error('Gagal upload foto baru', ['error' => $e->getMessage()]);
                 }
@@ -235,8 +226,6 @@ class VehicleRepairC extends Controller
                 ActivityLog::ACTION_UPDATE,
                 "Pengajuan Perbaikan Kendaraan {$vehicleRepair->vehicle->name} berhasil diperbarui"
             );
-
-            Log::info('Update pengajuan berhasil', ['vehicleRepId' => $vehicleRepId]);
 
             return redirect('/report/vehicleRepair/')
                 ->with('success', 'Data Pengajuan Perbaikan Kendaraan berhasil diperbarui.');

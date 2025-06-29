@@ -44,11 +44,11 @@
                                     <option value="">--- Pilih Cabang ---</option>
                                     @if (Auth::user()->branch)
                                         <option value="{{ Auth::user()->branch->branchId }}" selected>
-                                            {{ Auth::user()->branch->address }}
+                                            {{   \Illuminate\Support\Str::replace('@branch.com', '', Auth::user()->branch->email) }}
                                         </option>
                                     @else
                                         @foreach ($branch as $b)
-                                            <option value="{{ $b->branchId }}">{{ $b->address }}</option>
+                                            <option value="{{ $b->branchId }}">{{ \Illuminate\Support\Str::replace('@branch.com', '', $b->email) }}</option>
                                         @endforeach
                                     @endif
                                 </select>                                
