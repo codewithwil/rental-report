@@ -6,7 +6,8 @@ use App\{
     Models\Transactions\Payment\PaymentAmount,
     Models\Files\Files,
     Traits\ActivityLogs,
-    Traits\HasUploadFile
+    Traits\HasUploadFile,
+    Models\Report\VehicleRepair\VehicleRepair
 };
 
 use Illuminate\{
@@ -23,6 +24,8 @@ class VehicleRepairRealiz extends Model
     protected $fillable   = [
         'vehicleRep_id', 'completeDate', 'notes', 'status'
     ];
+
+    public function vehicleRepair(){return $this->belongsTo(VehicleRepair::class, 'vehicleRep_id', 'vehicleRepId');}
 
     public function paymentAmount()
     {

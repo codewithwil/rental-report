@@ -67,21 +67,24 @@ public function uploadMultipleFiles(array $files, string $relationName = 'photo'
             return;
         }
 
-        if ($this->$relationName) {
-            try {
-                Storage::disk($disk)->delete($this->$relationName->path);
-                $this->$relationName->delete();
-                Log::info('Foto lama berhasil dihapus', [
-                    'path' => $this->$relationName->path,
-                    'fileable_id' => $this->getKey(),
-                ]);
-            } catch (\Throwable $e) {
-                Log::error('Gagal menghapus foto lama', [
-                    'fileable_id' => $this->getKey(),
-                    'error' => $e->getMessage(),
-                ]);
+        if ($this->$relationName()->exists()) {
+            foreach ($this->$relationName as $oldFile) {
+                try {
+                    Storage::disk($disk)->delete($oldFile->path);
+                    $oldFile->delete();
+                    Log::info('Foto lama berhasil dihapus', [
+                        'path' => $oldFile->path,
+                        'fileable_id' => $this->getKey(),
+                    ]);
+                } catch (\Throwable $e) {
+                    Log::error('Gagal menghapus foto lama', [
+                        'fileable_id' => $this->getKey(),
+                        'error' => $e->getMessage(),
+                    ]);
+                }
             }
         }
+
 
         $base64Str = preg_replace('/^data:\w+\/\w+;base64,/', '', $file['base64']);
         $base64Str = str_replace(' ', '+', $base64Str);

@@ -7,7 +7,8 @@ use App\{
     Models\User,
     Models\Files\Files,
     Traits\HasUploadFile,
-    Traits\ActivityLogs
+    Traits\ActivityLogs,
+    Models\Transactions\Vehicle\VehicleRepairRealiz
 };
 
 use Illuminate\{
@@ -33,6 +34,7 @@ class VehicleRepair extends Model
     public function vehicle(){return $this->belongsTo(Vehicle::class, 'vehicle_id', 'vehicleId');}
     public function user(){return $this->belongsTo(User::class, 'user_id', 'id');}
     public function photo(){return $this->morphMany(Files::class, 'fileable');}
+    public function vehicleRepairReal(){return $this->hasMany(VehicleRepairRealiz::class, 'vehicleRep_id', 'vehicleRepId');}
 
     public function getStatusRepairLabelAttribute()
     {

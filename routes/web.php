@@ -31,6 +31,7 @@ Route::middleware(['auth'])->group(function(){
     Route::group(["prefix" => "/configuration", "as" => "configuration."], __DIR__ . "/web/configuration/index.php");
     Route::group(["prefix" => "/setting", "as" => "setting."], __DIR__ . "/web/setting/index.php");
     Route::group(["prefix" => "/report", "as" => "report."], __DIR__ . "/web/report/index.php");
+    Route::group(["prefix" => "/transactions", "as" => "transactions."], __DIR__ . "/web/transactions/index.php");
     Route::group(["prefix" => "/history", "as" => "history."], __DIR__ . "/web/history/index.php");
 });
 

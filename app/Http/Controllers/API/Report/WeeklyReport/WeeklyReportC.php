@@ -121,21 +121,18 @@ class WeeklyReportC extends Controller
             $startY = $pdf->GetY();
             $height = 10;
 
-            // Komponen
             $pdf->Rect($startX, $startY, 60, $height);
             $pdf->SetXY($startX + 2, $startY + 2);
             $pdf->Cell(56, 6, $componentName, 0, 0, 'L');
 
-            // Status
-            $pdf->SetXY($startX + 60, $startY);
+            $pdf->SetXY($startX + 61, $startY + 2);
             $pdf->Rect($startX + 60, $startY, 65, $height);
             $pdf->TextField("status_$i", 63, 6, [], [
                 'x' => $startX + 61,
                 'y' => $startY + 2,
             ]);
 
-            // Note
-            $pdf->SetXY($startX + 125, $startY);
+            $pdf->SetXY($startX + 126, $startY + 2);
             $pdf->Rect($startX + 125, $startY, 65, $height);
             $pdf->TextField("note_$i", 63, 6, [], [
                 'x' => $startX + 126,
@@ -182,8 +179,7 @@ class WeeklyReportC extends Controller
         $pdf->Output('Laporan_Kendaraan_' . $weeklyReport->vehicle->plate_number . '.pdf', 'I');
     }
 
-
-    public function approve($weekReportId){
+    public function approve($weekReportId){ 
         try {
             $weekReport = WeeklyReport::findOrFail($weekReportId);
             $weekReport->status = WeeklyReport::STATUS_APPROVE;

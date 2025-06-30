@@ -57,12 +57,12 @@
                 <p>Laporan Mingguan</p>
               </a>
             </li>
-            {{-- <li class="nav-item">
+            <li class="nav-item">
               <a href="{{ url('report/vehicleRepair') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Ajukan Perbaikan</p>
               </a>
-            </li> --}}
+            </li>
           </ul>
         </li>
         @endif
@@ -79,9 +79,9 @@
           </a>
           <ul class="nav nav-treeview ps-4">
             <li class="nav-item">
-              <a href="{{ url('report/weeklyReport') }}" class="nav-link">
+              <a href="{{ url('transactions/vehicleRepairReal') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
-                <p>Perbaikan Kendaraan</p>
+                <p>Nota Perbaikan</p>
               </a>
             </li>
           </ul>

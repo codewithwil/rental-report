@@ -84,23 +84,21 @@
                         </div>
 
                         @if ($vehicleRepair->photo && $vehicleRepair->photo->count())
-    <div class="mb-3">
-        <label class="form-label">Foto Sebelumnya</label>
-        <div class="row" id="existing-photos-wrapper">
-            @foreach ($vehicleRepair->photo as $img)
-                <div class="col-md-3 mb-3 existing-photo" data-photo-id="{{ $img->filesId }}">
-                    <div class="position-relative border p-2 rounded">
-                        <button type="button" class="btn-close position-absolute top-0 end-0 m-1 btn-sm btn-remove-photo" aria-label="Close" title="Hapus Foto"></button>
-                        <img src="{{ asset('storage/'.$img->path) }}" class="img-fluid rounded mb-2" alt="Foto Sebelumnya">
-                        <input type="hidden" name="keep_photos[]" value="{{ $img->filesId }}" class="keep-photo-input">
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </div>
-@endif
-
-
+                            <div class="mb-3">
+                                <label class="form-label">Foto Sebelumnya</label>
+                                <div class="row" id="existing-photos-wrapper">
+                                    @foreach ($vehicleRepair->photo as $img)
+                                        <div class="col-md-3 mb-3 existing-photo" data-photo-id="{{ $img->filesId }}">
+                                            <div class="position-relative border p-2 rounded">
+                                                <button type="button" class="btn-close position-absolute top-0 end-0 m-1 btn-sm btn-remove-photo" aria-label="Close" title="Hapus Foto"></button>
+                                                <img src="{{ asset('storage/'.$img->path) }}" class="img-fluid rounded mb-2" alt="Foto Sebelumnya">
+                                                <input type="hidden" name="keep_photos[]" value="{{ $img->filesId }}" class="keep-photo-input">
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
                     </div>
                     <button type="submit" class="btn btn-success">Simpan</button>
                     <a href="{{ url('/report/vehicleRepair') }}" class="btn btn-secondary">Kembali</a>
@@ -170,22 +168,18 @@
         this.submit();
     });
 
-
-document.querySelectorAll('.btn-remove-photo').forEach(button => {
-    button.addEventListener('click', function () {
-        const photoCard = this.closest('.existing-photo');
-        if (photoCard) {
-            const hiddenInput = photoCard.querySelector('input[name="keep_photos[]"]');
-            if (hiddenInput) {
-                // Hapus juga dari FORM
-                hiddenInput.remove();
+    document.querySelectorAll('.btn-remove-photo').forEach(button => {
+        button.addEventListener('click', function () {
+            const photoCard = this.closest('.existing-photo');
+            if (photoCard) {
+                const hiddenInput = photoCard.querySelector('input[name="keep_photos[]"]');
+                if (hiddenInput) {
+                    hiddenInput.remove();
+                }
+                photoCard.remove();
             }
-            photoCard.remove();
-        }
+        });
     });
-});
-
-
 
     new TomSelect("#VehicleSelect", {
         placeholder: "Pilih Kendaraan",

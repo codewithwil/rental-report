@@ -23,8 +23,8 @@ class VehicleRepairRealizC extends Controller
 
     public function index()
     {
-        $vehicleRepair = VehicleRepairRealiz::get();
-        return view('admin.transactions.vehicleRepair.index', compact('vehicleRepair'));
+        $vehicleRepairReal = VehicleRepairRealiz::with(['vehicleRepair','paymentAmount'])->get();
+        return view('admin.transactions.vehicleRepair.index', compact('vehicleRepairReal'));
     }
 
     public function invoice() 
@@ -40,11 +40,19 @@ class VehicleRepairRealizC extends Controller
         return view('admin.transactions.vehicleRepair.create', compact('vehicle'));
     }
 
+    public function show($vehicleRepairRealId){
+          $vehicleRepair     = VehicleRepair::where('status', VehicleRepair::STATUS_ACTIVE)->get();
+        $vehicleRepairReal = VehicleRepairRealiz::with(['vehicleRepair','paymentAmount', 'photo'])
+                                                ->findOrFail($vehicleRepairRealId);
+        return view('admin.transactions.vehicleRepair.details', compact('vehicleRepairReal', 'vehicleRepair'));
+    }
+
     public function edit($vehicleRepairRealId)
     {
-        $vehicle = VehicleRepair::where('status', VehicleRepair::STATUS_ACTIVE)->get();
-        $vehicleRepair = VehicleRepairRealiz::with('photo')->findOrFail($vehicleRepairRealId);
-        return view('admin.transactions.vehicleRepair.update', compact('vehicleRepair', 'vehicle'));
+        $vehicleRepair     = VehicleRepair::where('status', VehicleRepair::STATUS_ACTIVE)->get();
+        $vehicleRepairReal = VehicleRepairRealiz::with(['vehicleRepair','paymentAmount', 'photo'])
+                                                ->findOrFail($vehicleRepairRealId);
+        return view('admin.transactions.vehicleRepair.update', compact('vehicleRepairReal', 'vehicleRepair'));
     }
 
     public function store(Request $req)
@@ -60,7 +68,6 @@ class VehicleRepairRealizC extends Controller
                 'photo.size'    => 'nullable|numeric|max:10485760',
                 'photo.base64'  => 'nullable|string',
             ]);
-
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
@@ -79,16 +86,17 @@ class VehicleRepairRealizC extends Controller
 
             $vehicleRepair->paymentAmount()->create([
                 'amount'        => $req->amount,
-                'type'          => PaymentAmount::TYPE_KElUAR,
+                'type'          => PaymentAmount::TYPE_KELUAR,
+                'status'        => PaymentAmount::STATUS_ACTIVE,
             ]);
 
-            $vehicleRepair->load('vehicle')->logActivity(
+            $vehicleRepair->logActivity(
                 ActivityLog::ACTION_CREATE,
-                "Transaksi Realisasi Perbaikan Kendaraan {$vehicleRepair->vehicle->name} berhasil ditambahkan"
+                "Nota Perbaikan Kendaraan {$vehicleRepair->completeDate} berhasil ditambahkan"
             );
 
             return redirect('/transactions/vehicleRepairReal/')
-                ->with('success', 'Data Transaksi Realisasi Perbaikan Kendaraan berhasil ditambahkan!');
+                ->with('success', 'Data Nota Perbaikan Kendaraan berhasil ditambahkan!');
         });
     }
 
@@ -131,18 +139,18 @@ class VehicleRepairRealizC extends Controller
             } else {
                 $vehicleRepair->paymentAmount()->create([
                     'amount' => $req->amount,
-                    'type'   => PaymentAmount::TYPE_KElUAR,
+                    'type'   => PaymentAmount::TYPE_KELUAR,
                     'status' => PaymentAmount::STATUS_ACTIVE,
                 ]);
             }
 
-            $vehicleRepair->load('vehicle')->logActivity(
+            $vehicleRepair->logActivity(
                 ActivityLog::ACTION_UPDATE,
-                "Realisasi Perbaikan Kendaraan {$vehicleRepair->vehicle->name} berhasil diperbarui"
+                "Nota Perbaikan Kendaraan {$vehicleRepair->completeDate} berhasil diperbarui"
             );
 
             return redirect('/transactions/vehicleRepairReal/')
-                ->with('success', 'Data Realisasi Perbaikan Kendaraan berhasil diperbarui.');
+                ->with('success', 'Data Nota Perbaikan Kendaraan berhasil diperbarui.');
         });
     }
 
@@ -153,13 +161,13 @@ class VehicleRepairRealizC extends Controller
             $vehicleRepair->status = VehicleRepairRealiz::STATUS_INACTIVE;
             $vehicleRepair->save();
 
-            $vehicleRepair->load('vehicle')->logActivity(
+            $vehicleRepair->logActivity(
                 ActivityLog::ACTION_DELETE,
-                "Realisasi Perbaikan Kendaraan {$vehicleRepair->vehicle->name} telah dihapus"
+                "Nota Perbaikan Kendaraan {$vehicleRepair->completeDate} telah dihapus"
             );
 
             return redirect('/transactions/vehicleRepairReal/')
-                ->with('success', 'Data Realisasi Perbaikan Kendaraan berhasil dihapus.');
+                ->with('success', 'Data Nota Perbaikan Kendaraan berhasil dihapus.');
         });
     }
 }
