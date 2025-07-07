@@ -11,7 +11,7 @@ use App\{
     Traits\DbBeginTransac,
     Models\Transactions\Payment\PaymentAmount
 };
-
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\{
     Http\Request,
     Support\Facades\Validator
@@ -45,6 +45,23 @@ class VehicleRepairRealizC extends Controller
         $vehicleRepairReal = VehicleRepairRealiz::with(['vehicleRepair','paymentAmount', 'photo'])
                                                 ->findOrFail($vehicleRepairRealId);
         return view('admin.transactions.vehicleRepair.details', compact('vehicleRepairReal', 'vehicleRepair'));
+    }
+
+    public function pdf($vehicleRepairRealId)
+    {
+        $vehicleRepairReal = VehicleRepairRealiz::with([
+            'vehicleRepair.vehicle.brand',
+            'vehicleRepair.vehicle.branch',
+            'vehicleRepair.user.admin',
+            'vehicleRepair.user.supervisor',
+            'vehicleRepair.user.employee',
+            'photo',
+            'paymentAmount'
+        ])->findOrFail($vehicleRepairRealId);
+
+        $company = Company::first();
+        $pdf     = Pdf::loadView('admin.transactions.vehicleRepair.pdf', compact('vehicleRepairReal', 'company'));
+        return $pdf->stream('NotaPerbaikan_' . now()->format('Ymd_His') . '.pdf');
     }
 
     public function edit($vehicleRepairRealId)

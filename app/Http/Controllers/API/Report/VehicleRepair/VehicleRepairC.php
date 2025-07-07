@@ -137,7 +137,7 @@ class VehicleRepairC extends Controller
             ]);
 
             if ($req->has('photos')) {
-                $vehicleRepair->uploadBase64Files($req->photos, 'photo', 'vehicle_repair');
+                $vehicleRepair->uploadMultipleBase64Files($req->photos, 'photo', 'vehicle_repair');
             }
 
             $vehicleRepair->load('vehicle');
@@ -216,7 +216,7 @@ class VehicleRepairC extends Controller
 
             if (!empty($decodedPhotos)) {
                 try {
-                    $vehicleRepair->uploadBase64Files($decodedPhotos, 'photo', 'vehicle_repair');
+                    $vehicleRepair->uploadMultipleBase64Files($decodedPhotos, 'photo', 'vehicle_repair');
                 } catch (\Throwable $e) {
                     Log::error('Gagal upload foto baru', ['error' => $e->getMessage()]);
                 }

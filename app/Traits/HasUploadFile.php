@@ -35,30 +35,52 @@ trait HasUploadFile
         return $fileModel;
     }
 
-public function uploadMultipleFiles(array $files, string $relationName = 'photo', string $disk = 'public', string $path = 'uploads')
-{
-    Log::info('Masuk ke uploadMultipleFiles', ['files_count' => count($files)]);
+    public function uploadMultipleBase64Files(array $files, string $relationName = 'photo', string $path = 'uploads', string $disk = 'public')
+    {
+        if ($this->$relationName()->exists()) {
+            foreach ($this->$relationName as $oldFile) {
+                try {
+                    Storage::disk($disk)->delete($oldFile->path);
+                    $oldFile->delete();
+                    Log::info('Foto lama dihapus', ['path' => $oldFile->path]);
+                } catch (\Throwable $e) {
+                    Log::error('Gagal hapus file lama', ['error' => $e->getMessage()]);
+                }
+            }
+        }
 
-    foreach ($files as $file) {
-        if ($file instanceof \Illuminate\Http\UploadedFile && $file->isValid()) {
-            $storedPath = $file->store($path, $disk);
+        foreach ($files as $file) {
+            if (!isset($file['base64'], $file['type'])) {
+                Log::warning('Data file tidak valid', ['file' => $file]);
+                continue;
+            }
 
-            Log::info('Menyimpan file', [
-                'original' => $file->getClientOriginalName(),
-                'stored_path' => $storedPath
-            ]);
+            $base64Str = preg_replace('/^data:\w+\/\w+;base64,/', '', $file['base64']);
+            $base64Str = str_replace(' ', '+', $base64Str);
+            $decoded = base64_decode($base64Str);
+
+            if ($decoded === false) {
+                Log::error('Gagal decode base64', ['base64' => substr($base64Str, 0, 30)]);
+                continue;
+            }
+
+            $extension = explode('/', $file['type'])[1] ?? 'jpg';
+            $filename = uniqid('file_') . '.' . $extension;
+            $storedPath = $path . '/' . $filename;
+
+            Storage::disk($disk)->put($storedPath, $decoded);
 
             $this->$relationName()->create([
                 'path'          => $storedPath,
-                'original_name' => $file->getClientOriginalName(),
-                'size'          => $file->getSize(),
-                'mime_type'     => $file->getMimeType(),
+                'original_name' => $file['name'] ?? $filename,
+                'size'          => $file['size'] ?? strlen($decoded),
+                'mime_type'     => $file['type'],
             ]);
-        } else {
-            Log::warning('File tidak valid atau bukan UploadedFile', ['type' => gettype($file)]);
+
+            Log::info('File base64 disimpan', ['path' => $storedPath]);
         }
     }
-}
+
 
     public function uploadBase64File(array $file, string $relationName = 'photo', string $path = 'uploads', string $disk = 'public')
     {
