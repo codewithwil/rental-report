@@ -11,14 +11,13 @@ use App\{
     Traits\DbBeginTransac,
     Models\Notification\Notification
 };
-use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
 use Illuminate\{
     Http\Request,
     Support\Facades\Auth,
     Support\Facades\Validator,
 };
 use TCPDF;
+use Carbon\Carbon;
 
 class WeeklyReportC extends Controller
 {
@@ -178,6 +177,138 @@ class WeeklyReportC extends Controller
 
         $pdf->Output('Laporan_Kendaraan_' . $weeklyReport->vehicle->plate_number . '.pdf', 'I');
     }
+
+    public function printMonthly(Request $request)
+    {
+        $month = $request->month; 
+
+        $weeklyReports = WeeklyReport::with([
+            'vehicle',
+            'weeklyReportDetail',
+            'user.admin', 'user.supervisor', 'user.employee'
+        ])
+        ->whereMonth('report_date', Carbon::parse($month)->month)
+        ->whereYear('report_date', Carbon::parse($month)->year)
+        ->get()
+        ->groupBy('vehicle_id'); 
+
+        if ($weeklyReports->isEmpty()) {
+            return redirect()->back()->with('error', 'Tidak ada laporan pada bulan tersebut.');
+        }
+
+        $pdf = new TCPDF();
+        $pdf->SetTitle('Laporan Bulanan Kendaraan');
+        $pdf->AddPage();
+        $pdf->SetFont('helvetica', '', 10);
+
+        $pdf->SetFont('', 'B', 12);
+        $pdf->Cell(0, 10, 'LAPORAN KONDISI KENDARAAN RENTAL - BULAN ' . strtoupper(Carbon::parse($month)->translatedFormat('F Y')), 0, 1, 'C');
+        $pdf->Ln(5);
+
+        $allComponents = collect();
+        $summaryData = [];
+
+        foreach ($weeklyReports as $vehicleId => $reports) {
+            $report = $reports->last(); 
+            $vehicle = $report->vehicle;
+
+            $info = [
+                'nama' => $vehicle->name . ' (' . $vehicle->plate_number . ')',
+                'Periode Pemeriksaan' => $report->report_date ? Carbon::parse($report->report_date)->format('d/m/Y') : '-',
+                'komponen' => []
+            ];
+
+            foreach ($report->weeklyReportDetail as $detail) {
+                $comp = $this->translateComponent($detail->component);
+                $allComponents->push($comp);
+                $info['komponen'][$comp] = [
+                    'status' => $detail->status,
+                    'note' => $detail->note
+                ];
+            }
+
+            $summaryData[] = $info;
+        }
+
+        $allComponents = $allComponents->unique()->values();
+
+        $pdf->SetFont('', 'B', 10);
+        $pdf->Cell(50, 8, 'Komponen', 1, 0, 'C');
+        foreach ($summaryData as $data) {
+            $pdf->Cell(45, 8, $data['nama'], 1, 0, 'C');
+        }
+        $pdf->Ln();
+
+       $labels = ['Periode Pemeriksaan'];
+        foreach ($labels as $label) {
+            $pdf->SetFont('', 'B');
+            $pdf->Cell(50, 6, $label, 1);
+            foreach ($summaryData as $data) {
+                $pdf->SetFont('', '');
+                $pdf->Cell(45, 6, $data[$label] ?? '-', 1); 
+            }
+            $pdf->Ln();
+        }
+
+
+        $componentIndex = 0;
+        foreach ($allComponents as $component) {
+            $pdf->SetFont('', 'B');
+            $pdf->Cell(50, 6, $this->translateComponent($component), 1);
+
+            $vehicleIndex = 0;
+            foreach ($summaryData as $data) {
+                $comp = $data['komponen'][$component] ?? ['status' => '-', 'note' => ''];
+                $text = $comp['status'] . ($comp['note'] ? ' (' . $comp['note'] . ')' : '');
+
+                $x = $pdf->GetX();
+                $y = $pdf->GetY();
+
+                $pdf->Rect($x, $y, 45, 6); 
+                $pdf->TextField("cmp_{$vehicleIndex}_{$componentIndex}", 43, 5, [], [
+                    'x' => $x + 1,
+                    'y' => $y + 0.5,
+                    'value' => $text,
+                ]);
+                $pdf->SetXY($x + 45, $y); 
+
+                $vehicleIndex++;
+            }
+            $pdf->Ln();
+            $componentIndex++;
+        }
+
+
+        $pdf->Ln(5);
+        $pdf->SetFont('', 'B');
+        $pdf->Cell(0, 6, '📸 Dokumentasi Foto', 0, 1);
+        $pdf->SetFont('', '');
+        $pdf->MultiCell(0, 6, 'Silakan akses dokumentasi kendaraan melalui: Aplikasi Rental Mobil', 0, 'L');
+
+        $steps = [
+            "1. Masuk ke aplikasi menggunakan akun masing-masing",
+            "2. Pilih menu “Laporan” → “Laporan Mingguan”",
+            "3. Cari berdasarkan Nomor Polisi",
+            "4. Klik “Detail” untuk lihat foto-fotonya"
+        ];
+        foreach ($steps as $step) {
+            $pdf->MultiCell(0, 6, $step, 0, 'L');
+        }
+
+        $pdf->Ln(3);
+        $pdf->SetFont('', 'B');
+        $pdf->Write(6, "Lihat panduan lengkap dalam video tutorial berikut: ", '');
+        $pdf->SetTextColor(0, 0, 255);
+        $pdf->Write(6, "Tonton Video Tutorial disini", "https://drive.google.com/file/d/1d0Yc-FRzbPJ7IDfZhtTwdameEJkJVBQX/view?usp=sharing");
+        $pdf->SetTextColor(0);
+
+    if (ob_get_length()) {
+        ob_end_clean();
+    }
+    $pdf->Output('Laporan_Bulanan_' . Carbon::parse($month)->format('F_Y') . '.pdf', 'I');
+
+    }
+
 
     public function approve($weekReportId){ 
         try {
@@ -352,4 +483,19 @@ class WeeklyReportC extends Controller
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
+
+    private function translateComponent($component)
+    {
+        $translations = [
+            'body' => 'Bodi',
+            'light' => 'Lampu',
+            'tire' => 'Ban',
+            'wiper' => 'Wiper',
+            'engine' => 'Mesin',
+            'equipment' => 'Peralatan',
+        ];
+
+        return $translations[strtolower($component)] ?? ucfirst($component);
+    }
+
 }

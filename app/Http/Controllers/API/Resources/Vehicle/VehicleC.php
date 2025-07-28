@@ -13,13 +13,17 @@ use App\{
     Models\User,
     Models\Resources\Vehicle\VehicleDocument,
     Traits\AsignFile,
-    Models\History\ActivityLog\ActivityLog
+    Models\History\ActivityLog\ActivityLog,
+    Models\Transactions\Payment\PaymentAmount,
+    Models\Transactions\RentCar\RentCar,
+    Models\Transactions\Vehicle\VehicleRepairRealiz
 };
 
 use Illuminate\{
     Http\Request,
     Support\Facades\Validator,
 };
+use TCPDF;
 
 class VehicleC extends Controller
 {
@@ -71,6 +75,45 @@ class VehicleC extends Controller
     public function show($vehicleId){
         $vehicle = Vehicle::with('vehicleDocument')->findOrFail($vehicleId);
         return view('admin.resources.vehicle.details', compact('vehicle'));
+    }
+
+    public function financePdf($vehicleId)
+    {
+        $vehicle  = Vehicle::with(['brand', 'branch'])->findOrFail($vehicleId);
+
+        $rentCars = RentCar::with('paymentAmount')
+            ->where('vehicle_id', $vehicleId)
+            ->get();
+
+        $repairs = VehicleRepairRealiz::with('paymentAmount', 'vehicleRepair')
+            ->whereHas('vehicleRepair', function ($query) use ($vehicleId) {
+                $query->where('vehicle_id', $vehicleId);
+            })
+            ->get();
+
+        $totalIncome = $rentCars->flatMap->paymentAmount
+            ->where('type', PaymentAmount::TYPE_MASUK)
+            ->where('status', PaymentAmount::STATUS_ACTIVE)
+            ->sum('amount');
+
+        $totalExpense = $repairs->flatMap->paymentAmount
+            ->where('type', PaymentAmount::TYPE_KELUAR)
+            ->where('status', PaymentAmount::STATUS_ACTIVE)
+            ->sum('amount');
+
+        $pdf = new TCPDF();
+        $pdf->SetTitle('Laporan Keuangan Kendaraan');
+        $pdf->AddPage();
+
+        $html = view('admin.resources.vehicle.finance', compact(
+            'vehicle', 'totalIncome', 'totalExpense', 'rentCars', 'repairs'
+        ))->render();
+
+        $pdf->writeHTML($html, true, false, true, false, '');
+        if (ob_get_length()) {
+            ob_end_clean();
+        }
+        $pdf->Output('laporan_keuangan_' . $vehicle->plate_number . '.pdf', 'I');
     }
 
     public function edit($vehicleId){

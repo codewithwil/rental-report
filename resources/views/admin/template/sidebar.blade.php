@@ -63,6 +63,12 @@
                 <p>Ajukan Perbaikan</p>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="{{ url('report/kas') }}" class="nav-link">
+                <i class="nav-icon bi bi-circle"></i>
+                <p>Kas Keluar/Masuk</p>
+              </a>
+            </li>
           </ul>
         </li>
         @endif
@@ -82,6 +88,12 @@
               <a href="{{ url('transactions/vehicleRepairReal') }}" class="nav-link">
                 <i class="nav-icon bi bi-circle"></i>
                 <p>Nota Perbaikan</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ url('transactions/rentCar') }}" class="nav-link">
+                <i class="nav-icon bi bi-circle"></i>
+                <p>Sewa mobil</p>
               </a>
             </li>
           </ul>

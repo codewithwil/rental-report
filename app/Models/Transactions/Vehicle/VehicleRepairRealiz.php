@@ -26,12 +26,13 @@ class VehicleRepairRealiz extends Model
     ];
 
     public function vehicleRepair(){return $this->belongsTo(VehicleRepair::class, 'vehicleRep_id', 'vehicleRepId');}
-
     public function paymentAmount()
     {
         return $this->morphMany(PaymentAmount::class, 'payable', 'payable_type', 'payable_id', 'vehcileRepairRealId');
     }
 
     public function photo(){return $this->morphMany(Files::class, 'fileable');}
+    public function getVehicleAttribute(){return $this->vehicleRepair?->vehicle;}
+    public function getReportDateAttribute(){return $this->completeDate;}
 
 }

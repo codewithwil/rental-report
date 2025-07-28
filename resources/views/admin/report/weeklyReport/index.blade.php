@@ -76,19 +76,38 @@
             <div class="col-md-12">
                 <div class="card mb-4">
                     <div class="card-header"><h3 class="card-title">Laporan Mingguan</h3></div>
-                    <div class="col-12 d-flex">
-                        @if(auth()->user()->hasRole(['admin', 'supervisor', 'petugas']))
-                        <a href="{{ url('report/weeklyReport/create') }}" class="btn btn-success ms-3 mt-3">
-                            Tambah
-                        </a>
-                        @endif
-                        @if(auth()->user()->hasRole(['admin', 'supervisor']))
-                        <a href="{{ url('report/weeklyReport/invoice') }}" class="btn btn-secondary ms-3 mt-3">
-                            Invoice
-                        </a>
-                        @endif
+                    @if(auth()->user()->hasRole(['admin', 'supervisor', 'petugas']))
+                        <div class="col-12 px-3">
+                            <div class="d-flex flex-wrap align-items-end gap-3 mb-4">
+                                <form class="d-flex flex-wrap align-items-end gap-2" method="GET" action="{{ url('report/weeklyReport/print-monthly') }}">
+                                    <div>
+                                        <label for="month" class="form-label mb-1">Pilih Bulan</label>
+                                        <input type="month" class="form-control" id="month" name="month" required>
+                                    </div>
+                                    <div>
+                                        <button type="submit" class="btn btn-danger mt-1">
+                                            <i class="bi bi-printer"></i> Print Laporan Bulanan
+                                        </button>
+                                    </div>
+                                </form>
 
-                    </div>
+                                <div>
+                                    <a href="{{ url('report/weeklyReport/create') }}" class="btn btn-success mt-1">
+                                        <i class="bi bi-plus-circle"></i> Tambah
+                                    </a>
+                                </div>
+
+                                @if(auth()->user()->hasRole(['admin', 'supervisor']))
+                                <div>
+                                    <a href="{{ url('report/weeklyReport/invoice') }}" class="btn btn-secondary mt-1">
+                                        <i class="bi bi-file-earmark-text"></i> Invoice
+                                    </a>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+
                     <div class="card-body">
                         <table id="dataTableWeeklyReport" class="table table-striped responsive-table" style="width:100%">
                             <thead>

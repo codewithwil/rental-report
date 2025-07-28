@@ -7,9 +7,10 @@ use App\{
     Models\People\Admin\Admin,
     Models\Resources\Company\Company,
     Models\User,
-    Traits\DbBeginTransac
+    Traits\DbBeginTransac,
+    Models\History\ActivityLog\ActivityLog
 };
-use App\Models\History\ActivityLog\ActivityLog;
+
 use Illuminate\{
     Http\Request,
     Support\Facades\Hash,

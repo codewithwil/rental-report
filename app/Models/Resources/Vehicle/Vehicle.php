@@ -8,10 +8,11 @@ use App\{
     Models\Resources\Category\Category,
     Models\Report\WeeklyReport\WeeklyReport,
     Models\User,
-    Models\Scopes\UserBranchScope,
-    Traits\ActivityLogs
+    Traits\ActivityLogs,
+    Models\Report\VehicleRepair\VehicleRepair,
+    Models\Transactions\RentCar\RentCar
 };
-use App\Models\Report\VehicleRepair\VehicleRepair;
+
 use Illuminate\{
     Database\Eloquent\Model
 };
@@ -40,6 +41,7 @@ class Vehicle extends Model
     public function weeklyReport(){return $this->hasOne(WeeklyReport::class, 'vehicle_id', 'vehicleId');}
     public function vehicleDocument(){return $this->hasOne(VehicleDocument::class, 'vehicle_id', 'vehicleId');}
     public function vehicleRepair(){return $this->hasMany(VehicleRepair::class, 'vehicle_id', 'vehicleId');}
+    public function rentCar(){return $this->hasMany(RentCar::class, 'vehicle_id', 'vehicleId');}
     public function getStatusLabelAttribute()
     {
         $labels = [

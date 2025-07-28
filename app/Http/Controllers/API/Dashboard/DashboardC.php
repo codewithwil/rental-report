@@ -7,57 +7,55 @@ use App\{
     Models\Resources\Branch\Branch,
     Models\User,
     Models\Resources\Rules\Rules,
-    Models\Resources\Vehicle\Vehicle
+    Models\Resources\Vehicle\Vehicle,
+    Models\Transactions\Payment\PaymentAmount
 };
-use App\Models\Report\WeeklyReport\WeeklyReport;
+
 use Carbon\Carbon;
 
 class DashboardC extends Controller
 {
-    public function index() {
-        $users    = User::count();
-        $branch   = Branch::where('status', Branch::STATUS_ACTIVE)->count();
-        $vehicle  = Vehicle::where('status', '!=', Vehicle::STATUS_DELETED)->count();
-        $rules    = Rules::first();
-
-        $startDate = Carbon::now()->subDays(30)->startOfDay();
+    public function index()
+    {
+        $users     = User::count();
+        $branch    = Branch::where('status', Branch::STATUS_ACTIVE)->count();
+        $vehicle   = Vehicle::where('status', '!=', Vehicle::STATUS_DELETED)->count();
+        $rules     = Rules::first();
+        $startDate = Carbon::now()->subMonths(12)->startOfMonth(); 
         $endDate   = Carbon::now()->endOfDay();
-
-        $reports = WeeklyReport::selectRaw('DATE(report_date) as date, status, COUNT(*) as total')
-            ->whereBetween('report_date', [$startDate, $endDate])
-            ->groupBy('date', 'status')
-            ->orderBy('date')
+        $payments  = PaymentAmount::with('payable')
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->get()
-            ->groupBy('date');
+            ->groupBy(function ($payment) {
+            return Carbon::parse(optional($payment->payable)->report_date ?? $payment->created_at)->format('Y-m');
+        });
 
-        $chartData = [];
-        $dates = collect();
+        $financeDates      = [];
+        $financeIncome     = [];
+        $financeExpense    = [];
+        $financeProfitLoss = [];
 
-        foreach ($reports as $date => $items) {
-            $dates->push($date);
-            $chartData[$date] = [
-                'pending'  => 0,
-                'approve'  => 0,
-                'rejected' => 0,
-            ];
-            foreach ($items as $item) {
-                if ($item->status == WeeklyReport::STATUS_PENDING) {
-                    $chartData[$date]['pending'] = $item->total;
-                } elseif ($item->status == WeeklyReport::STATUS_APPROVE) {
-                    $chartData[$date]['approve'] = $item->total;
-                } elseif ($item->status == WeeklyReport::STATUS_REJECTED) {
-                    $chartData[$date]['rejected'] = $item->total;
-                }
-            }
+        foreach (Carbon::parse($startDate)->startOfMonth()->monthsUntil($endDate) as $month) {
+            $formatted           = $month->format('Y-m');
+            $label               = $month->format('M Y');
+            $monthlyPayments     = $payments[$formatted] ?? collect(); 
+            $pemasukan           = $monthlyPayments->where('type', PaymentAmount::TYPE_MASUK)->sum('amount');
+            $pengeluaran         = $monthlyPayments->where('type', PaymentAmount::TYPE_KELUAR)->sum('amount');
+            $financeDates[]      = $label;
+            $financeIncome[]     = $pemasukan;
+            $financeExpense[]    = $pengeluaran;
+            $financeProfitLoss[] = $pemasukan - $pengeluaran;
         }
 
         return view('admin.dashboard.index', [
-            'users'      => $users,
-            'branch'     => $branch,
-            'vehicle'    => $vehicle,
-            'rules'      => $rules,
-            'chartDates' => $dates->values(),
-            'chartData'  => $chartData,
+            'users'             => $users,
+            'branch'            => $branch,
+            'vehicle'           => $vehicle,
+            'rules'             => $rules,
+            'financeDates'      => $financeDates,
+            'financeIncome'     => $financeIncome,
+            'financeExpense'    => $financeExpense,
+            'financeProfitLoss' => $financeProfitLoss,
         ]);
     }
 }

@@ -7,6 +7,7 @@ Route::get("/", [ctr\API\Resources\Vehicle\VehicleC::class, 'index'])->name("ind
 Route::get("/create", [ctr\API\Resources\Vehicle\VehicleC::class, 'create'])->name("create");
 Route::get("/invoice", [ctr\API\Resources\Vehicle\VehicleC::class, 'invoice'])->name("invoice");
 Route::get("/show/{vehicleId}", [ctr\API\Resources\Vehicle\VehicleC::class, 'show'])->name("show");
+Route::get("/finance/{vehicleId}", [ctr\API\Resources\Vehicle\VehicleC::class, 'financePdf'])->name("finance");
 Route::get("/edit/{vehicleId}", [ctr\API\Resources\Vehicle\VehicleC::class, 'edit'])->name("edit");
 Route::post("/store", [ctr\API\Resources\Vehicle\VehicleC::class, 'store'])->name("store");
 Route::post("/update/{vehicleId}", [ctr\API\Resources\Vehicle\VehicleC::class, 'update'])->name("update");

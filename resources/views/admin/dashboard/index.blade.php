@@ -63,13 +63,40 @@
             </div>
         </div>
 
-        {{-- Grafik Laporan --}}
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white">
-                <h5 class="mb-0">Grafik Laporan Mingguan</h5>
+        {{-- Grafik Keuangan --}}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 g-4">
+            <div class="col">
+                <div class="card shadow-sm rounded-4 border-0 h-100 hover-shadow transition">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="mb-0">Pemasukan</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="incomeChart" height="150"></canvas>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <canvas id="statusChart" height="120"></canvas>
+            <div class="col">
+                <div class="card shadow-sm rounded-4 border-0 h-100 hover-shadow transition">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="mb-0">Pengeluaran</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="expenseChart" height="150"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card shadow-sm rounded-4 border-0 h-100 hover-shadow transition">
+                    <div class="card-header bg-white border-0">
+                        <h5 class="mb-0">Laba Rugi</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="profitLossChart" height="150"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -101,43 +128,84 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const ctx = document.getElementById('statusChart').getContext('2d');
-    new Chart(ctx, {
+    new Chart(document.getElementById('incomeChart'), {
+        type: 'bar',
+        data: {
+            labels: @json($financeDates),
+            datasets: [{
+                label: 'Pemasukan',
+                data: @json($financeIncome),
+                backgroundColor: 'rgba(54, 162, 235, 0.7)'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+
+    // Pengeluaran - LINE
+    new Chart(document.getElementById('expenseChart'), {
         type: 'line',
         data: {
-            labels: @json($chartDates),
-            datasets: [
-                {
-                    label: 'Perlu Validasi',
-                    data: @json(collect($chartData)->pluck('pending')),
-                    borderColor: 'rgba(255, 206, 86, 1)',
-                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                    tension: 0.4,
-                    fill: true
-                },
-                {
-                    label: 'Disetujui',
-                    data: @json(collect($chartData)->pluck('approve')),
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    tension: 0.4,
-                    fill: true
-                },
-                {
-                    label: 'Ditolak',
-                    data: @json(collect($chartData)->pluck('rejected')),
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    tension: 0.4,
-                    fill: true
-                },
-            ]
+            labels: @json($financeDates),
+            datasets: [{
+                label: 'Pengeluaran',
+                data: @json($financeExpense),
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+    
+    const profitLossData = @json($financeProfitLoss);
+    const profitLossColors = profitLossData.map(value => value >= 0 ? 'rgba(40, 167, 69, 0.3)' : 'rgba(220, 53, 69, 0.3)');
+    const profitLossBorderColors = profitLossData.map(value => value >= 0 ? 'rgba(40, 167, 69, 1)' : 'rgba(220, 53, 69, 1)');
+
+    new Chart(document.getElementById('profitLossChart'), {
+        type: 'line',
+        data: {
+            labels: @json($financeDates),
+            datasets: [{
+                label: 'Laba Rugi',
+                data: profitLossData,
+                backgroundColor: profitLossColors,
+                borderColor: profitLossBorderColors,
+                borderWidth: 3, 
+                tension: 0.4, 
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointBackgroundColor: profitLossBorderColors,
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+            }]
         },
         options: {
             responsive: true,
             plugins: {
-                legend: {
-                    position: 'top',
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: 'Laba Rugi per Bulan (Hijau = Untung, Merah = Rugi)'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.raw;
+                            const label = value >= 0 ? 'Untung: ' : 'Rugi: ';
+                            return label + new Intl.NumberFormat('id-ID', {
+                                style: 'currency',
+                                currency: 'IDR'
+                            }).format(value);
+                        }
+                    }
                 }
             },
             scales: {
@@ -148,8 +216,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+
+    // Tampilkan modal aturan
     const rulesModal = new bootstrap.Modal(document.getElementById('rulesModal'));
     rulesModal.show();
 });
 </script>
+
 @endsection
