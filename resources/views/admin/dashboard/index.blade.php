@@ -5,8 +5,8 @@
 <div class="app-content-header py-3 border-bottom mb-3">
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center flex-wrap">
-            <h3 class="mb-2">Dashboard</h3>
-            <ol class="breadcrumb mb-0">
+            <h3 class="mb-0"><i class="bi bi-speedometer2 me-1"></i> Dashboard</h3>
+            <ol class="breadcrumb mb-0 small">
                 <li class="breadcrumb-item"><a href="#">Home</a></li>
                 <li class="breadcrumb-item active">Dashboard</li>
             </ol>
@@ -19,8 +19,8 @@
 
         {{-- Statistik Card --}}
         <div class="row g-4 mb-4">
-            <div class="col-md-4">
-                <div class="card shadow-sm border-0 h-100 text-bg-success text-white">
+            <div class="col-md-4" data-aos="fade-down" data-aos-delay="100">
+                <div class="card shadow border-0 h-100 text-white" style="background: linear-gradient(135deg, #1d976c, #93f9b9);">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
                             <h1 class="fw-bold">{{ $branch }}</h1>
@@ -33,8 +33,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card shadow-sm border-0 h-100 text-bg-primary text-white">
+            <div class="col-md-4" data-aos="fade-down" data-aos-delay="200">
+                <div class="card shadow border-0 h-100 text-white" style="background: linear-gradient(135deg, #396afc, #2948ff);">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
                             <h1 class="fw-bold">{{ $vehicle }}</h1>
@@ -47,8 +47,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card shadow-sm border-0 h-100 text-bg-warning text-dark">
+            <div class="col-md-4" data-aos="fade-down" data-aos-delay="300">
+                <div class="card shadow border-0 h-100 text-white" style="background: linear-gradient(135deg, #f7971e, #ffd200);">
                     <div class="card-body d-flex align-items-center justify-content-between">
                         <div>
                             <h1 class="fw-bold">{{ $users }}</h1>
@@ -64,8 +64,65 @@
         </div>
 
         {{-- Grafik Keuangan --}}
+        <div class="card border-0 shadow-sm rounded-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="card-body py-3">
+                <form method="GET" action="{{ url('/dashboard') }}">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-auto">
+                            <label for="filter_type" class="form-label small fw-semibold text-muted mb-1">
+                                <i class="bi bi-filter me-1"></i>Jenis Filter
+                            </label>
+                            <select class="form-select form-select-sm" name="filter_type" id="filter_type">
+                                <option value="month" {{ request('filter_type') === 'month' ? 'selected' : '' }}>Bulanan</option>
+                                <option value="year" {{ request('filter_type') === 'year' ? 'selected' : '' }}>Tahunan</option>
+                            </select>
+                        </div>
+                        <div class="col-md-auto" id="filter_value_container">
+                            <label class="form-label small fw-semibold text-muted mb-1" for="filter_value">
+                                <i class="bi bi-calendar me-1"></i>Pilih Periode
+                            </label>
+
+                            <input type="month" name="filter_value"
+                                id="filter_value_month" class="form-control form-control-sm"
+                                value="{{ request('filter_value') }}"
+                                style="{{ request('filter_type') === 'year' ? 'display:none;' : '' }}">
+
+                            <input type="number" 
+                                name="filter_value"
+                                id="filter_value_year"
+                                placeholder="Tahun (misal: 2025)"
+                                min="2000" max="{{ date('Y') }}"
+                                class="form-control form-control-sm"
+                                style="{{ request('filter_type') === 'year' ? '' : 'display:none;' }}">
+                        </div>
+                        <div class="col-md-auto">
+                            <label class="d-block invisible">.</label>
+                            <button type="submit" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-funnel-fill me-1"></i> Terapkan
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        @if(request('filter_type') && request('filter_value'))
+            <div class="mb-3">
+                <p class="text-muted">
+                    Menampilkan data untuk: 
+                    <strong>
+                        @if(request('filter_type') === 'year')
+                            Tahun {{ request('filter_value') }}
+                        @else
+                            {{ \Carbon\Carbon::parse(request('filter_value'))->translatedFormat('F Y') }}
+                        @endif
+                    </strong>
+                </p>
+            </div>
+        @endif
+
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 g-4">
-            <div class="col">
+            <div class="col" data-aos="fade-right" data-aos-delay="100">
                 <div class="card shadow-sm rounded-4 border-0 h-100 hover-shadow transition">
                     <div class="card-header bg-white border-0">
                         <h5 class="mb-0">Pemasukan</h5>
@@ -75,7 +132,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col">
+            <div class="col" data-aos="fade-left" data-aos-delay="100">
                 <div class="card shadow-sm rounded-4 border-0 h-100 hover-shadow transition">
                     <div class="card-header bg-white border-0">
                         <h5 class="mb-0">Pengeluaran</h5>
@@ -87,7 +144,7 @@
             </div>
         </div>
 
-        <div class="row mt-4">
+        <div class="row mt-4" >
             <div class="col-12">
                 <div class="card shadow-sm rounded-4 border-0 h-100 hover-shadow transition">
                     <div class="card-header bg-white border-0">
@@ -217,10 +274,41 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
-    // Tampilkan modal aturan
-    const rulesModal = new bootstrap.Modal(document.getElementById('rulesModal'));
-    rulesModal.show();
 });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const filterType = document.getElementById('filter_type');
+    const inputMonth = document.getElementById('filter_value_month');
+    const inputYear  = document.getElementById('filter_value_year');
+
+    function toggleFilterInput() {
+        if (filterType.value === 'year') {
+            inputMonth.style.display = 'none';
+            inputMonth.disabled      = true;
+
+            inputYear.style.display = '';
+            inputYear.disabled      = false;
+        } else {
+            inputMonth.style.display = '';
+            inputMonth.disabled      = false;
+
+            inputYear.style.display = 'none';
+            inputYear.disabled      = true;
+        }
+    }
+
+    toggleFilterInput();
+    filterType.addEventListener('change', toggleFilterInput);
+});
+</script>
+@if($showModal)
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const rulesModal = new bootstrap.Modal(document.getElementById('rulesModal'));
+        rulesModal.show();
+    });
+</script>
+@endif
 
 @endsection
