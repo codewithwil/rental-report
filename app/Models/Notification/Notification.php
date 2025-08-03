@@ -2,8 +2,13 @@
 
 namespace App\Models\Notification;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
+use App\{
+    Models\User
+};
+
+use Illuminate\{
+    Database\Eloquent\Model
+};
 
 class Notification extends Model
 {

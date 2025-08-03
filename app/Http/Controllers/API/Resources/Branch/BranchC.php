@@ -13,9 +13,9 @@ use App\{
 use Illuminate\{
     Http\Request,
     Support\Facades\DB,
-    Support\Facades\Validator
+    Support\Facades\Validator,
+    Support\Facades\Cache
 };
-use Illuminate\Support\Facades\Cache;
 
 class BranchC extends Controller
 {

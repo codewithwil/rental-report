@@ -2,7 +2,9 @@
 
 namespace App\Models\Transactions\Payment;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\{
+    Database\Eloquent\Model
+};
 
 class PaymentAmount extends Model
 {

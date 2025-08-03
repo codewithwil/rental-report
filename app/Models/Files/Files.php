@@ -2,7 +2,9 @@
 
 namespace App\Models\Files;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\{
+    Database\Eloquent\Model
+};
 
 class Files extends Model
 {

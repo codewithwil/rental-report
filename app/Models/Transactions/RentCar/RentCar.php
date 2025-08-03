@@ -8,6 +8,7 @@ use App\{
     Models\Transactions\Payment\PaymentAmount,
     Traits\ActivityLogs,
     Traits\HasUploadFile,
+    Models\Transactions\RentCar\ReturnRentCar
 
 };
 
@@ -30,11 +31,11 @@ class RentCar extends Model
     ];
 
     public function vehicle(){return $this->belongsTo(Vehicle::class, 'vehicle_id', 'vehicleId');}
-
     public function paymentAmount()
     {
         return $this->morphMany(PaymentAmount::class, 'payable', 'payable_type', 'payable_id', 'rentCarId');
     }
+    public function returnRentCar(){return $this->belongsTo(ReturnRentCar::class, 'rentCar_id', 'rentCarId');}
     public function photo(){return $this->morphMany(Files::class, 'fileable');}
     public function getVehicleNameAttribute(){return $this->vehicle?->name;}
     public function getReportDateAttribute(){return $this->startDate;}

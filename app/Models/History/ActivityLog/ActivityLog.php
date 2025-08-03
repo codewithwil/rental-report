@@ -2,8 +2,13 @@
 
 namespace App\Models\History\ActivityLog;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
+use App\{
+    Models\User
+};
+
+use Illuminate\{
+    Database\Eloquent\Model
+};
 
 class ActivityLog extends Model
 {

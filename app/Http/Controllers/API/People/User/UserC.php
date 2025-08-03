@@ -10,14 +10,9 @@ use App\{
 };
 
 use Illuminate\{
-    Http\Request,
-    Support\Facades\DB,
-    Support\Facades\Hash,
-    Support\Facades\Validator,
     Support\Facades\Auth
 };
 
-use Spatie\Permission\Models\Role;
 
 class UserC extends Controller
 {

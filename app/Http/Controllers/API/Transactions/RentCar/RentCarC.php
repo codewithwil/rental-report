@@ -11,15 +11,17 @@ use App\{
     Models\History\ActivityLog\ActivityLog,
     Models\Transactions\Payment\PaymentAmount
 };
-use Carbon\Carbon;
+
 use Illuminate\{
     Http\Request,
     Support\Facades\Validator
 };
 
+use Carbon\Carbon;
+
 class RentCarC extends Controller
 {
-     use DbBeginTransac;
+    use DbBeginTransac;
 
     public function index()
     {
@@ -52,23 +54,6 @@ class RentCarC extends Controller
                                                 ->findOrFail($rentCarId);
         return view('admin.transactions.rentCar.details', compact('rentCar'));
     }
-
-    // public function pdf($rentCarId)
-    // {
-    //     $rentCar = RentCar::with([
-    //         'rentCar.vehicle.brand',
-    //         'rentCar.vehicle.branch',
-    //         'rentCar.user.admin',
-    //         'rentCar.user.supervisor',
-    //         'rentCar.user.employee',
-    //         'photo',
-    //         'paymentAmount'
-    //     ])->findOrFail($rentCarId);
-
-    //     $company = Company::first();
-    //     $pdf     = Pdf::loadView('admin.transactions.rentCar.pdf', compact('rentCar', 'company'));
-    //     return $pdf->stream('NotaPerbaikan_' . now()->format('Ymd_His') . '.pdf');
-    // }
 
     public function edit($rentCarId)
     {

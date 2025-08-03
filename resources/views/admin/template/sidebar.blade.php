@@ -34,6 +34,13 @@
     color: #adb5bd;
   }
 
+.sidebar-menu .nav-link p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0;
+}
+
 </style>
 
 <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
@@ -98,6 +105,12 @@
             <ul class="nav nav-treeview">
               <li class="nav-item"><a href="{{ url('transactions/vehicleRepairReal') }}" class="nav-link  {{ request()->is('transactions/vehicleRepairReal') ? 'active' : '' }}"><i class="nav-icon bi bi-circle"></i> <p>Nota Perbaikan</p></a></li>
               <li class="nav-item"><a href="{{ url('transactions/rentCar') }}" class="nav-link  {{ request()->is('transactions/rentCar') ? 'active' : '' }}"><i class="nav-icon bi bi-circle"></i> <p>Sewa Mobil</p></a></li>
+              <li class="nav-item"><a href="{{ url('transactions/returnRentCar') }}" class="nav-link  {{ request()->is('transactions/returnRentCar') ? 'active' : '' }}"><i class="nav-icon bi bi-circle"></i> 
+                <p data-bs-toggle="tooltip" data-bs-placement="right" title="Pengembalian Sewa Mobil">
+                  Pengembalian Sewa Mobil
+                </p>
+
+              </a></li>
             </ul>
           </li>
         @endif
@@ -170,3 +183,12 @@
     </nav>
   </div>
 </aside>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+      new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+  });
+</script>
